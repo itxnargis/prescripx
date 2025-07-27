@@ -23,7 +23,29 @@
 
     <meta name="description"
       content="Developed a healthcare app using React, enabling patients to manage appointments and view prescriptions with secure authentication and integrated Razorpay payments." />
-  </head>
+ 
+  <!-- Google Analytics (only for production) -->
+<script>
+  const hostname = location.hostname;
+  const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+
+  if (!isLocal) {
+    const gtagScript = document.createElement("script");
+    gtagScript.async = true;
+    gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=G-BM6PSWCJFN";
+    document.head.appendChild(gtagScript);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    window.gtag = gtag;
+
+    gtag('js', new Date());
+    gtag('config', 'G-BM6PSWCJFN');
+  }
+</script>
+
+  
+    </head>
 
   <body>
     <div id="root"></div>
