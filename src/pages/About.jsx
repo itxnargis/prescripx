@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, memo } from "react"
-import { assets } from "../assets/assets"
+import { assets } from "../../public/assets/assets"
 import { Zap, Users, Shield, Award, ArrowRight, CheckCircle, Heart, Sparkles } from 'lucide-react'
 
 const About = memo(() => {
@@ -46,22 +46,6 @@ const About = memo(() => {
     }, 3000)
 
     return () => clearInterval(interval)
-  }, [])
-
-  const handleGetStarted = useCallback(() => {
-    // Track user interaction
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "click", {
-        event_category: "engagement",
-        event_label: "about_cta_click",
-      })
-    }
-    
-    // Navigate to signup or scroll to relevant section
-    const element = document.getElementById("features")
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-    }
   }, [])
 
   const features = [
@@ -213,7 +197,7 @@ const About = memo(() => {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20 bg-white/50 backdrop-blur-sm">
+        {/* <section className="py-20 bg-white/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
@@ -235,7 +219,7 @@ const About = memo(() => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Features Section */}
         <section className="py-20" id="features">
@@ -333,34 +317,6 @@ const About = memo(() => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-primary/5 via-blue-500/5 to-primary/5">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Ready to Transform Your Healthcare Experience?
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Join thousands of satisfied patients who trust PrescripX for their healthcare needs
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={handleGetStarted}
-                className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary/90 
-                         hover:shadow-lg transform hover:scale-105 transition-all duration-300 
-                         inline-flex items-center justify-center"
-              >
-                <span>Get Started Today</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
-              <button
-                className="border-2 border-primary text-primary px-8 py-4 rounded-full font-semibold 
-                         hover:bg-primary hover:text-white transition-all duration-300"
-              >
-                Learn More
-              </button>
-            </div>
-          </div>
-        </section>
       </div>
     </>
   )

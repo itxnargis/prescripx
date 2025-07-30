@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState, useCallback, memo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext"
-import { assets } from "../assets/assets"
+import { assets } from "../../public/assets/assets"
 import { toast } from "react-toastify"
 import axios from "axios"
 import RelatedDoctors from "../components/RelatedDoctors"

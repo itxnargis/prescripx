@@ -1,18 +1,13 @@
 "use client"
 
-import { useContext, useState, useEffect, useCallback, useRef, lazy, Suspense } from "react"
+import { useContext, useState, useEffect, useCallback, useRef } from "react"
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import { AppContext } from "../context/AppContext"
-import { assets } from "../assets/assets"
-import { Helmet } from "react-helmet" // For SEO
+import { assets } from "../../public/assets/assets"
+import { Helmet } from "react-helmet" 
 
-// Lazy-loaded components for better performance
-const SearchBar = lazy(() => import("./SearchBar"))
-
-// Analytics helper (implement based on your analytics provider)
 const trackEvent = (eventName, properties = {}) => {
   try {
-    // Example implementation - replace with your analytics provider
     if (window.analytics) {
       window.analytics.track(eventName, properties)
     }
@@ -27,14 +22,12 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showProfileDropdown, setShowProfileDropdown] = useState(false)
-  const [showSearch, setShowSearch] = useState(false)
   const [isReducedMotion, setIsReducedMotion] = useState(false)
   const { token, setToken, userData } = useContext(AppContext)
 
   // Refs for click outside detection
   const profileDropdownRef = useRef(null)
   const mobileMenuRef = useRef(null)
-  const searchButtonRef = useRef(null)
   const scrollTimeoutRef = useRef(null)
   const navbarRef = useRef(null)
 
@@ -42,10 +35,8 @@ const Navbar = () => {
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
     setIsReducedMotion(mediaQuery.matches)
-
     const handleMotionPreferenceChange = (e) => setIsReducedMotion(e.matches)
     mediaQuery.addEventListener("change", handleMotionPreferenceChange)
-
     return () => mediaQuery.removeEventListener("change", handleMotionPreferenceChange)
   }, [])
 
@@ -85,7 +76,6 @@ const Navbar = () => {
       sentinel.style.width = "100%"
       sentinel.style.pointerEvents = "none"
       document.body.prepend(sentinel)
-
       observer.observe(sentinel)
 
       return () => {
@@ -135,37 +125,26 @@ const Navbar = () => {
       ) {
         setShowMenu(false)
       }
-
-      // Search bar
-      if (
-        showSearch &&
-        searchButtonRef.current &&
-        !searchButtonRef.current.contains(event.target) &&
-        !event.target.closest(".search-container")
-      ) {
-        setShowSearch(false)
-      }
     }
 
     // Use event delegation for better performance
-    if (showProfileDropdown || showMenu || showSearch) {
+    if (showProfileDropdown || showMenu) {
       document.addEventListener("mousedown", handleClickOutside)
     }
 
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [showProfileDropdown, showMenu, showSearch])
+  }, [showProfileDropdown, showMenu])
 
   // Handle escape key and body scroll
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        if (showSearch) setShowSearch(false)
-        else if (showProfileDropdown) setShowProfileDropdown(false)
+        if (showProfileDropdown) setShowProfileDropdown(false)
         else if (showMenu) setShowMenu(false)
       }
     }
 
-    if (showMenu || showProfileDropdown || showSearch) {
+    if (showMenu || showProfileDropdown) {
       document.addEventListener("keydown", handleKeyDown)
       if (showMenu) {
         document.body.style.overflow = "hidden"
@@ -178,27 +157,18 @@ const Navbar = () => {
       document.removeEventListener("keydown", handleKeyDown)
       document.body.style.overflow = "unset"
     }
-  }, [showMenu, showProfileDropdown, showSearch])
+  }, [showMenu, showProfileDropdown])
 
   const toggleMenu = useCallback(() => {
     trackEvent("toggle_mobile_menu")
     setShowMenu((prev) => !prev)
     setShowProfileDropdown(false)
-    setShowSearch(false)
   }, [])
 
   const toggleProfileDropdown = useCallback(() => {
     trackEvent("toggle_profile_dropdown")
     setShowProfileDropdown((prev) => !prev)
     setShowMenu(false)
-    setShowSearch(false)
-  }, [])
-
-  const toggleSearch = useCallback(() => {
-    trackEvent("toggle_search")
-    setShowSearch((prev) => !prev)
-    setShowMenu(false)
-    setShowProfileDropdown(false)
   }, [])
 
   const handleNavigation = useCallback(
@@ -207,7 +177,6 @@ const Navbar = () => {
       navigate(path)
       setShowMenu(false)
       setShowProfileDropdown(false)
-      setShowSearch(false)
     },
     [navigate],
   )
@@ -259,7 +228,6 @@ const Navbar = () => {
           content="PrescripX - Your trusted healthcare platform for connecting with doctors and managing appointments."
         />
         <link rel="canonical" href={`https://prescripx.com${location.pathname}`} />
-
         {/* Open Graph / Social Media */}
         <meta property="og:title" content={getCurrentPageTitle()} />
         <meta
@@ -269,7 +237,6 @@ const Navbar = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://prescripx.com${location.pathname}`} />
         <meta property="og:image" content="https://prescripx.com/og-image.jpg" />
-
         {/* Structured Data for SEO */}
         <script type="application/ld+json">
           {`
@@ -375,26 +342,8 @@ const Navbar = () => {
                 </ul>
               </div>
 
-              {/* Desktop Actions: Search, User Menu, Auth Button */}
+              {/* Desktop Actions: User Menu, Auth Button */}
               <div className="hidden md:flex items-center space-x-4">
-                {/* Search Button */}
-                <button
-                  ref={searchButtonRef}
-                  onClick={toggleSearch}
-                  className="p-2 rounded-full text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  aria-label={showSearch ? "Close search" : "Open search"}
-                  aria-expanded={showSearch}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-
                 {/* User Menu / Auth Button */}
                 {token && userData ? (
                   <div className="relative" ref={profileDropdownRef}>
@@ -421,7 +370,9 @@ const Navbar = () => {
                           />
                         ) : null}
                         <div
-                          className={`w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-sm font-medium ring-2 ring-blue-100 ${userData.image ? "hidden" : "flex"}`}
+                          className={`w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white text-sm font-medium ring-2 ring-blue-100 ${
+                            userData.image ? "hidden" : "flex"
+                          }`}
                           aria-hidden="true"
                         >
                           {getUserInitials(userData.name)}
@@ -436,7 +387,9 @@ const Navbar = () => {
                         <p className="text-xs text-blue-600">Online</p>
                       </div>
                       <svg
-                        className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`}
+                        className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                          showProfileDropdown ? "rotate-180" : ""
+                        }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -521,44 +474,8 @@ const Navbar = () => {
                             </svg>
                             <span>My Appointments</span>
                           </button>
-                          <button
-                            onClick={() => handleNavigation("/medical-records")}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 flex items-center space-x-3"
-                            role="menuitem"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span>Medical Records</span>
-                          </button>
-                          <button
-                            onClick={() => handleNavigation("/settings")}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 flex items-center space-x-3"
-                            role="menuitem"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            <span>Settings</span>
-                          </button>
+                         
                         </div>
-
                         <div className="border-t border-gray-100 py-1">
                           <button
                             onClick={logout}
@@ -590,25 +507,7 @@ const Navbar = () => {
               </div>
 
               {/* Mobile Menu Button */}
-              <div className="flex items-center md:hidden space-x-2">
-                {/* Mobile Search Button */}
-                <button
-                  ref={searchButtonRef}
-                  onClick={toggleSearch}
-                  className="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  aria-label={showSearch ? "Close search" : "Open search"}
-                  aria-expanded={showSearch}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-
+              <div className="flex items-center md:hidden">
                 <button
                   onClick={toggleMenu}
                   className="mobile-menu-button p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 relative z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -629,17 +528,6 @@ const Navbar = () => {
                   </svg>
                 </button>
               </div>
-            </div>
-
-            {/* Search Bar - Expandable */}
-            <div
-              className={`search-container overflow-hidden transition-all duration-300 ${
-                showSearch ? "max-h-16 opacity-100 py-2" : "max-h-0 opacity-0 py-0"
-              }`}
-            >
-              <Suspense fallback={<div className="w-full h-10 bg-gray-100 animate-pulse rounded-lg"></div>}>
-                {showSearch && <SearchBar onSearch={(term) => handleNavigation(`/search?q=${term}`)} />}
-              </Suspense>
             </div>
           </div>
         </nav>
@@ -738,7 +626,7 @@ const Navbar = () => {
             </nav>
 
             {/* Mobile Quick Actions */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-4">Quick Actions</h3>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -798,7 +686,7 @@ const Navbar = () => {
                   <span className="text-xs font-medium">Help</span>
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Mobile User Actions */}
             {token && userData && (
@@ -830,40 +718,6 @@ const Navbar = () => {
                     />
                   </svg>
                   <span>My Appointments</span>
-                </button>
-                <button
-                  onClick={() => handleNavigation("/medical-records")}
-                  className="w-full text-left px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-200 flex items-center space-x-3"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <span>Medical Records</span>
-                </button>
-                <button
-                  onClick={() => handleNavigation("/settings")}
-                  className="w-full text-left px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors duration-200 flex items-center space-x-3"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span>Settings</span>
                 </button>
                 <button
                   onClick={logout}

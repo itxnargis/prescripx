@@ -3,7 +3,7 @@
 import { memo, useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Github, Twitter, Linkedin, User, MapPin, Mail, Phone, ExternalLink, Heart, Shield, Award } from 'lucide-react'
-import { assets } from '../assets/assets'
+import { assets } from '../../public/assets/assets'
 
 const Footer = memo(() => {
   const navigate = useNavigate()
@@ -16,17 +16,9 @@ const Footer = memo(() => {
     { to: '/contact', label: 'Contact Us', description: 'Get in touch with us' }
   ]
 
-  const serviceLinks = [
-    { to: '/emergency', label: 'Emergency Care', description: '24/7 emergency services' },
-    { to: '/telemedicine', label: 'Telemedicine', description: 'Online consultations' },
-    { to: '/health-checkup', label: 'Health Checkup', description: 'Comprehensive health screening' },
-    { to: '/pharmacy', label: 'Online Pharmacy', description: 'Prescription delivery' }
-  ]
-
   const legalLinks = [
     { to: '/privacy', label: 'Privacy Policy' },
     { to: '/terms', label: 'Terms of Service' },
-    { to: '/cookies', label: 'Cookie Policy' },
     { to: '/disclaimer', label: 'Medical Disclaimer' }
   ]
 
@@ -145,7 +137,7 @@ const Footer = memo(() => {
           </div>
 
           {/* Main Footer Content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 py-16">
             {/* Company Info */}
             <div className="lg:col-span-1 space-y-6">
               <div className="flex items-start space-x-3">
@@ -196,30 +188,6 @@ const Footer = memo(() => {
               </h3>
               <nav className="space-y-3">
                 {navigationLinks.map((link) => (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    onClick={() => handleNavigation(link.to)}
-                    className="group flex items-center text-gray-600 hover:text-primary transition-all duration-200"
-                    title={link.description}
-                  >
-                    <ExternalLink className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                    <span className="group-hover:translate-x-1 transition-transform duration-200">
-                      {link.label}
-                    </span>
-                  </NavLink>
-                ))}
-              </nav>
-            </div>
-
-            {/* Services */}
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900 relative">
-                Our Services
-                <div className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent" />
-              </h3>
-              <nav className="space-y-3">
-                {serviceLinks.map((link) => (
                   <NavLink
                     key={link.to}
                     to={link.to}

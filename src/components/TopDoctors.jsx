@@ -9,10 +9,19 @@ const TopDoctors = memo(() => {
   const navigate = useNavigate()
   const { doctors } = useContext(AppContext)
   const [hoveredCard, setHoveredCard] = useState(null)
-  const [visibleDoctors, setVisibleDoctors] = useState(8)
+  const [visibleDoctors, setVisibleDoctors] = useState(9)
+  const [bookingStates, setBookingStates] = useState({})
 
   const handleDoctorClick = useCallback(
-    (doctorId) => {
+    (doctorId, isAvailable) => {
+      // Prevent booking if doctor is not available
+      if (!isAvailable) {
+        return
+      }
+
+      // Optimistic UI update
+      setBookingStates(prev => ({ ...prev, [doctorId]: 'booking' }))
+
       // Track user interaction
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "click", {
@@ -21,8 +30,11 @@ const TopDoctors = memo(() => {
         })
       }
 
-      navigate(`/appointment/${doctorId}`)
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      // Simulate booking process with instant feedback
+      setTimeout(() => {
+        navigate(`/appointment/${doctorId}`)
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      }, 300)
     },
     [navigate],
   )
@@ -45,7 +57,7 @@ const TopDoctors = memo(() => {
               <div className="h-8 bg-gray-200 rounded-lg w-64 mx-auto" />
               <div className="h-4 bg-gray-200 rounded w-96 mx-auto" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl p-6 space-y-4 shadow-sm">
                   <div className="h-48 bg-gray-200 rounded-xl" />
@@ -91,175 +103,193 @@ const TopDoctors = memo(() => {
       />
 
       <section
-        className="relative py-20 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20"
+        className="relative py-16 bg-gradient-to-br from-blue-50/40 via-white to-indigo-50/30"
         aria-labelledby="top-doctors-heading"
         role="region"
       >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)]" />
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fillRule=%22evenodd%22%3E%3Cg fill=%22%239CA3AF%22 fillOpacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+        {/* Optimized Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.15),transparent_60%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
-                <Award className="w-4 h-4 mr-2" />
-                Featured Specialists
+          {/* Simplified Header */}
+          <div className="text-center mb-12">
+            <div className="inline-block mb-3">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                <Award className="w-3.5 h-3.5 mr-1.5" />
+                Top Rated
               </span>
             </div>
 
-            <h1 id="top-doctors-heading" className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Top Doctors to{" "}
+            <h1 id="top-doctors-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              Book with{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Book
+                  Top Doctors
                 </span>
-                <span
-                  className="absolute bottom-0 left-0 w-full h-3 bg-gradient-to-r from-blue-200 to-indigo-200 
-                               -skew-x-12 transform origin-bottom-left"
-                />
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Discover and connect with our carefully curated network of{" "}
-              <span className="font-semibold text-gray-800">trusted medical professionals</span> who are ready to
-              provide exceptional care.
+            <p className="text-lg text-gray-600 max-w-xl mx-auto">
+              Connect with trusted medical professionals in just one click
             </p>
           </div>
 
-          {/* Doctors Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
+          {/* Enhanced Doctors Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {doctors.slice(0, visibleDoctors).map((doctor, index) => (
               <article
                 key={doctor._id}
-                className={`group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl border border-gray-100 
-                          overflow-hidden cursor-pointer transition-all duration-500 transform hover:scale-[1.02] 
-                          ${hoveredCard === doctor._id ? "ring-2 ring-blue-500/20" : ""}`}
-                onClick={() => handleDoctorClick(doctor._id)}
-                onMouseEnter={() => setHoveredCard(doctor._id)}
+                className={`group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 
+                          overflow-hidden transition-all duration-300 transform 
+                          ${doctor.available ? 'hover:scale-[1.02]' : 'opacity-75'} 
+                          ${hoveredCard === doctor._id ? "ring-2 ring-blue-500/20 shadow-xl" : ""}`}
+                onMouseEnter={() => doctor.available && setHoveredCard(doctor._id)}
                 onMouseLeave={() => setHoveredCard(null)}
                 role="button"
-                tabIndex={0}
-                aria-label={`Book appointment with Dr. ${doctor.name}, ${doctor.speciality}`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
-                    handleDoctorClick(doctor._id)
-                  }
-                }}
+                tabIndex={doctor.available ? 0 : -1}
+                aria-label={`${doctor.available ? 'Book appointment with' : 'Doctor currently unavailable'} Dr. ${doctor.name}, ${doctor.speciality}`}
               >
-                {/* Background Gradient */}
-                <div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-indigo-600/5 opacity-0 
-                              group-hover:opacity-100 transition-opacity duration-500"
-                />
-
-                {/* Doctor Image */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 aspect-square">
+                {/* Doctor Image with Optimized Loading */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 aspect-[4/3]">
                   <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    src={doctor.image || "/placeholder.svg?height=300&width=300&query=professional doctor portrait"}
-                    alt={`Dr. ${doctor.name} - ${doctor.speciality}`}
+                    className={`w-full h-full object-cover transition-transform duration-500 
+                              ${doctor.available ? 'group-hover:scale-105' : 'grayscale'}`}
+                    src={doctor.image || "/placeholder.svg?height=240&width=320&query=professional doctor portrait"}
+                    alt={`Dr. ${doctor.name}`}
                     loading={index < 4 ? "eager" : "lazy"}
-                    width="300"
-                    height="300"
+                    width="320"
+                    height="240"
                   />
 
-                  {/* Availability Badge */}
-                  <div
-                    className={`absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs 
-                              font-medium backdrop-blur-sm transition-all duration-300 ${
-                                doctor.available ? "bg-green-500/90 text-white shadow-lg" : "bg-gray-500/90 text-white"
-                              }`}
-                  >
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        doctor.available ? "bg-green-200" : "bg-gray-300"
-                      } animate-pulse`}
-                    />
+                  {/* Enhanced Availability Badge */}
+                  <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs 
+                              font-medium backdrop-blur-sm ${
+                                doctor.available 
+                                  ? "bg-green-500/90 text-white" 
+                                  : "bg-red-500/90 text-white"
+                              }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      doctor.available ? "bg-green-200 animate-pulse" : "bg-red-200"
+                    }`} />
                     {doctor.available ? "Available" : "Busy"}
                   </div>
 
-                  {/* Hover Overlay */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 
-                                transition-all duration-300 bg-black/20"
-                  >
-                    <button
-                      className="bg-white/90 backdrop-blur-sm text-blue-600 font-semibold px-6 py-3 rounded-full 
-                                     shadow-lg hover:bg-white hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                    >
-                      Book Now
-                      <ArrowRight className="w-4 h-4 ml-2 inline-block" />
-                    </button>
-                  </div>
+                  {/* Overlay for busy doctors */}
+                  {!doctor.available && (
+                    <div className="absolute inset-0 bg-gray-900/20 flex items-center justify-center">
+                      <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <span className="text-xs font-medium text-gray-700">Currently Unavailable</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Doctor Info */}
-                <div className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                {/* Streamlined Doctor Info */}
+                <div className="p-5 space-y-3">
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-gray-900 leading-tight">
                       Dr. {doctor.name}
                     </h3>
-                    <p className="text-gray-600 font-medium text-sm bg-gray-50 inline-block px-3 py-1 rounded-full">
+                    <p className="text-sm text-blue-600 font-medium">
                       {doctor.speciality}
                     </p>
                   </div>
 
-                  {/* Stats */}
+                  {/* Simplified Stats */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="font-medium">4.8</span>
+                      <Star className="w-3.5 h-3.5 text-yellow-400 fill-current" />
+                      <span className="font-medium text-gray-700">4.8</span>
                       <span className="text-gray-400">(120+)</span>
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-3.5 h-3.5" />
                       <span>5+ years</span>
                     </div>
                   </div>
 
-                  {/* Location */}
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <MapPin className="w-4 h-4" />
-                    <span>Healthcare Professional</span>
-                  </div>
+                  {/* ENHANCED BOOK NOW BUTTON - Updated Logic */}
+                  <button
+                    onClick={() => handleDoctorClick(doctor._id, doctor.available)}
+                    disabled={!doctor.available || bookingStates[doctor._id] === 'booking'}
+                    className={`
+                      w-full relative overflow-hidden rounded-xl font-semibold text-sm py-3 px-4
+                      transition-all duration-300 transform
+                      ${doctor.available 
+                        ? `bg-blue-600 text-white shadow-lg hover:bg-blue-700 hover:scale-105
+                           ${bookingStates[doctor._id] === 'booking' ? 'animate-pulse' : ''}`
+                        : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }
+                    `}
+                  >
+                    {/* Animated Background Shine Effect - Only for available doctors */}
+                    {doctor.available && !bookingStates[doctor._id] && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
+                                    -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    )}
+                    
+                    {/* Button Content */}
+                    <div className="relative flex items-center justify-center gap-2">
+                      {bookingStates[doctor._id] === 'booking' ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Booking...</span>
+                        </>
+                      ) : doctor.available ? (
+                        <>
+                          <Calendar className="w-4 h-4" />
+                          <span>Book Now</span>
+                          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="w-4 h-4" />
+                          <span>Currently Busy</span>
+                        </>
+                      )}
+                    </div>
 
-                  {/* Quick Actions */}
-                  <div className="flex items-center gap-2 pt-2">
-                    <button
-                      className="flex-1 bg-blue-50 text-blue-600 text-xs font-medium py-2 px-3 rounded-lg 
-                                     hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center gap-1"
-                    >
-                      <Calendar className="w-3 h-3" />
-                      Book Now
-                    </button>
-                    <button
-                      className="flex-1 bg-gray-100 text-gray-600 text-xs font-medium py-2 px-3 rounded-lg 
-                                     hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      View Profile
-                    </button>
+                    {/* Pulse Ring Effect - Only for available doctors */}
+                    {doctor.available && !bookingStates[doctor._id] && (
+                      <div className="absolute inset-0 rounded-xl ring-2 ring-blue-400 ring-opacity-0 
+                                    group-hover:ring-opacity-75 group-hover:animate-ping transition-all duration-300" />
+                    )}
+                  </button>
+
+                  {/* Quick Info */}
+                  <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-1">
+                    <div className="flex items-center gap-1">
+                      <Shield className="w-3 h-3 text-green-500" />
+                      <span>Verified</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      <span>Available Online</span>
+                    </div>
+                    {!doctor.available && (
+                      <div className="flex items-center gap-1 text-red-500">
+                        <Clock className="w-3 h-3" />
+                        <span>Busy</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </article>
             ))}
           </div>
 
-          {/* Load More / View All */}
-          <div className="text-center space-y-6">
+          {/* Simplified Load More / View All */}
+          <div className="text-center space-y-4">
             {visibleDoctors < doctors.length && (
               <button
                 onClick={handleLoadMore}
-                className="inline-flex items-center gap-2 bg-white border-2 border-blue-200 text-blue-600 
-                         px-6 py-3 rounded-full font-semibold hover:bg-blue-50 hover:border-blue-300 
-                         transition-all duration-300 transform hover:scale-105"
+                className="inline-flex items-center gap-2 bg-white border border-blue-200 text-blue-600 
+                         px-6 py-2.5 rounded-full font-medium hover:bg-blue-50 hover:border-blue-300 
+                         transition-all duration-200 transform hover:scale-105"
               >
-                <span>Load More Doctors</span>
+                <span>Show More</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
@@ -267,37 +297,14 @@ const TopDoctors = memo(() => {
             <div>
               <button
                 onClick={handleViewAll}
-                className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 
-                         hover:from-blue-100 hover:to-indigo-100 text-gray-700 hover:text-blue-600 px-8 py-4 
-                         rounded-full font-semibold text-lg shadow-sm hover:shadow-lg transition-all duration-300 
-                         transform hover:scale-105 border border-blue-200/50 hover:border-blue-300"
-                aria-label="View all doctors"
+                className="group inline-flex items-center gap-2 bg-gradient-to-r from-gray-50 to-blue-50 
+                         text-gray-700 hover:text-blue-600 px-6 py-3 rounded-full font-semibold 
+                         border border-gray-200 hover:border-blue-300 transition-all duration-300 
+                         transform hover:scale-105"
               >
                 <span>View All Doctors</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-                <div
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600/10 to-indigo-600/10 
-                              opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
-            </div>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="mt-16 text-center">
-            <div className="inline-flex items-center space-x-8 text-sm text-gray-500">
-              <div className="flex items-center space-x-2">
-                <Shield className="w-4 h-4 text-green-500" />
-                <span>All doctors verified</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-blue-500" />
-                <span>10,000+ satisfied patients</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Award className="w-4 h-4 text-yellow-500" />
-                <span>Top-rated professionals</span>
-              </div>
             </div>
           </div>
         </div>

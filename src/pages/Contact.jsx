@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, memo } from "react"
-import { assets } from "../assets/assets"
+import { assets } from "../../public/assets/assets"
 import { ChevronDown, ChevronUp, Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle, AlertTriangle } from 'lucide-react'
 
 const Contact = memo(() => {
@@ -116,29 +116,29 @@ const Contact = memo(() => {
     setOpenFaq(openFaq === index ? null : index)
   }, [openFaq])
 
-  const contactInfo = [
-    {
-      icon: <MapPin className="w-6 h-6" />,
-      title: "Visit Our Office",
-      details: ["54098 Wills Station", "Suite 350, Washington, USA"],
-      action: "Get Directions",
-      color: "bg-blue-500",
-    },
-    {
-      icon: <Phone className="w-6 h-6" />,
-      title: "Call Us",
-      details: ["(415) 555-3455", "Available 24/7"],
-      action: "Call Now",
-      color: "bg-green-500",
-    },
-    {
-      icon: <Mail className="w-6 h-6" />,
-      title: "Email Us",
-      details: ["itxnargiskhatun@gmail.com", "Quick response guaranteed"],
-      action: "Send Email",
-      color: "bg-purple-500",
-    },
-  ]
+  // const contactInfo = [
+  //   {
+  //     icon: <MapPin className="w-6 h-6" />,
+  //     title: "Visit Our Office",
+  //     details: ["54098 Wills Station", "Suite 350, Washington, USA"],
+  //     action: "Get Directions",
+  //     color: "bg-blue-500",
+  //   },
+  //   {
+  //     icon: <Phone className="w-6 h-6" />,
+  //     title: "Call Us",
+  //     details: ["(415) 555-3455", "Available 24/7"],
+  //     action: "Call Now",
+  //     color: "bg-green-500",
+  //   },
+  //   {
+  //     icon: <Mail className="w-6 h-6" />,
+  //     title: "Email Us",
+  //     details: ["itxnargiskhatun@gmail.com", "Quick response guaranteed"],
+  //     action: "Send Email",
+  //     color: "bg-purple-500",
+  //   },
+  // ]
 
   const faqs = [
     {
@@ -230,7 +230,7 @@ const Contact = memo(() => {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="py-20">
+        {/* <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-3 gap-8 mb-20">
               {contactInfo.map((info, index) => (
@@ -273,7 +273,7 @@ const Contact = memo(() => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Main Contact Section */}
         <section className="contact-content py-20">
@@ -323,7 +323,7 @@ const Contact = memo(() => {
                     <div className="border-t border-gray-200 pt-3 mt-3">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Emergency Line</span>
-                        <span className="font-medium text-red-600">24/7 Available</span>
+                        <span className="font-medium text-green-600">24/7 Available</span>
                       </div>
                     </div>
                   </div>
@@ -620,7 +620,7 @@ const Contact = memo(() => {
         </section>
 
         {/* Emergency Contact Section */}
-        <section className="py-20 bg-gradient-to-r from-primary/5 via-blue-500/5 to-primary/5">
+        {/* <section className="py-20 bg-gradient-to-r from-primary/5 via-blue-500/5 to-primary/5">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Need Immediate Assistance?</h2>
             <p className="text-xl text-gray-600 mb-8">Our support team is available 24/7 to help with urgent matters</p>
@@ -643,7 +643,7 @@ const Contact = memo(() => {
               </button>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
     </>
   )

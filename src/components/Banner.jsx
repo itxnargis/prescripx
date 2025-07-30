@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Star, Shield, Clock, Users, CheckCircle } from 'lucide-react'
-import { assets } from '../assets/assets'
+import { assets } from '../../public/assets/assets'
 
 const Banner = memo(() => {
   const navigate = useNavigate()

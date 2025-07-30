@@ -6,9 +6,10 @@ import { Search, X, Clock, TrendingUp } from 'lucide-react'
 const SearchBar = memo(({ 
   onSearch, 
   placeholder = "Search for doctors, specialties, conditions...",
-  className = ""
+  className = "",
+  initialValue = ""
 }) => {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState(initialValue)
   const [isLoading, setIsLoading] = useState(false)
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -18,10 +19,11 @@ const SearchBar = memo(({
   const suggestionsRef = useRef(null)
   const debounceRef = useRef()
 
-  // Popular search suggestions
+  // Popular search suggestions - matching your doctor specialties
   const popularSearches = [
-    "Cardiologist", "Dermatologist", "Pediatrician", "Orthopedic",
-    "Neurologist", "Gynecologist", "Psychiatrist", "Dentist"
+    "General Physician", "Gynaecologist", "Dermatologist", "Pediatricians", 
+    "Neurologist", "Gastroenterologist", "Cardiologist", "Orthopedic",
+    "Psychiatrist", "Dentist", "Ophthalmologist", "ENT Specialist"
   ]
 
   useEffect(() => {
@@ -30,12 +32,15 @@ const SearchBar = memo(({
       inputRef.current.focus()
     }
 
-    // Load recent searches from localStorage
-    const saved = localStorage.getItem('recentSearches')
-    if (saved) {
-      setRecentSearches(JSON.parse(saved))
-    }
+    // Load recent searches from memory (not localStorage)
+    const savedSearches = []
+    setRecentSearches(savedSearches)
   }, [])
+
+  // Update search term when initialValue changes
+  useEffect(() => {
+    setSearchTerm(initialValue)
+  }, [initialValue])
 
   // Debounced search suggestions
   const debouncedGetSuggestions = useCallback((term) => {
@@ -61,22 +66,28 @@ const SearchBar = memo(({
     const value = e.target.value
     setSearchTerm(value)
     debouncedGetSuggestions(value)
-  }, [debouncedGetSuggestions])
+    
+    // Call onSearch immediately for real-time filtering
+    if (onSearch) {
+      onSearch(value)
+    }
+  }, [debouncedGetSuggestions, onSearch])
 
   const handleSubmit = useCallback(async (e) => {
-    e.preventDefault()
+    if (e) e.preventDefault()
     if (!searchTerm.trim()) return
 
     setIsLoading(true)
     setShowSuggestions(false)
 
     try {
-      // Save to recent searches
+      // Save to recent searches (in memory)
       const updated = [searchTerm, ...recentSearches.filter(s => s !== searchTerm)].slice(0, 5)
       setRecentSearches(updated)
-      localStorage.setItem('recentSearches', JSON.stringify(updated))
 
-      await onSearch(searchTerm.trim())
+      if (onSearch) {
+        await onSearch(searchTerm.trim())
+      }
     } catch (error) {
       console.error('Search error:', error)
     } finally {
@@ -87,14 +98,24 @@ const SearchBar = memo(({
   const handleSuggestionClick = useCallback((suggestion) => {
     setSearchTerm(suggestion)
     setShowSuggestions(false)
-    onSearch(suggestion)
-  }, [onSearch])
+    
+    // Update recent searches
+    const updated = [suggestion, ...recentSearches.filter(s => s !== suggestion)].slice(0, 5)
+    setRecentSearches(updated)
+    
+    if (onSearch) {
+      onSearch(suggestion)
+    }
+  }, [onSearch, recentSearches])
 
   const clearSearch = useCallback(() => {
     setSearchTerm("")
     setShowSuggestions(false)
+    if (onSearch) {
+      onSearch("")
+    }
     inputRef.current?.focus()
-  }, [])
+  }, [onSearch])
 
   // Handle click outside
   useEffect(() => {
@@ -114,15 +135,18 @@ const SearchBar = memo(({
     if (e.key === 'Escape') {
       setShowSuggestions(false)
       inputRef.current?.blur()
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSubmit()
     }
-  }, [])
+  }, [handleSubmit])
 
   return (
     <div className={`relative w-full max-w-2xl mx-auto ${className}`}>
-      <form onSubmit={handleSubmit} className="relative">
+      <div className="relative">
         <div className="relative group">
           <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-            <Search className="w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors duration-200" />
+            <Search className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
           </div>
           
           <input
@@ -134,7 +158,7 @@ const SearchBar = memo(({
             onFocus={() => setShowSuggestions(searchTerm.length > 1 || recentSearches.length > 0)}
             placeholder={placeholder}
             className="w-full h-12 pl-12 pr-20 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl 
-                     focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 
                      hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md
                      placeholder:text-gray-400"
             aria-label="Search for healthcare services"
@@ -158,11 +182,12 @@ const SearchBar = memo(({
             )}
             
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               disabled={!searchTerm.trim() || isLoading}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 
                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200
-                       focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2"
+                       focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2"
               aria-label="Search"
             >
               {isLoading ? (
@@ -234,7 +259,7 @@ const SearchBar = memo(({
             )}
           </div>
         )}
-      </form>
+      </div>
     </div>
   )
 })

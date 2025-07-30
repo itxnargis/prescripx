@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Users, ArrowRight } from 'lucide-react'
-import { specialityData } from '../assets/assets'
+import { specialityData } from '../../public/assets/assets'
 
 const SpecialityMenu = memo(() => {
   const [activeIndex, setActiveIndex] = useState(null)
@@ -290,6 +290,7 @@ const SpecialityMenu = memo(() => {
             <p className="text-gray-600 mb-4">Can't find your specialty?</p>
             <Link
               to="/doctors"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="inline-flex items-center space-x-2 text-primary hover:text-primary/80 font-medium 
                        transition-colors duration-200"
             >
