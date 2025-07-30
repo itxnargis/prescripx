@@ -12,7 +12,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PageNotFound from './pages/pageNotFound'
+import PageNotFound from './pages/PageNotFound'
 import PrivacyPolicyPage from './pages/PrivacyPolicy'
 import TermsOfServicePage from './pages/TermsOfService'
 import MedicalDisclaimerPage from './pages/MedicalDisclaimer'
