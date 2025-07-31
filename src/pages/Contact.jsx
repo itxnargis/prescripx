@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, memo } from "react"
 import { assets } from "../../public/assets/assets"
-import { ChevronDown, ChevronUp, Clock, Send, CheckCircle } from 'lucide-react'
+import { Clock, Send, CheckCircle } from 'lucide-react'
+import FAQ from "../components/FAQ"
 
 const Contact = memo(() => {
   const [isVisible, setIsVisible] = useState(false)
@@ -105,43 +106,6 @@ const Contact = memo(() => {
       setIsSubmitting(false)
     }
   }, [validateForm])
-
-  const toggleFaq = useCallback((index) => {
-    setOpenFaq(openFaq === index ? null : index)
-  }, [openFaq])
-
-  const faqs = [
-    {
-      question: "How do I book an appointment?",
-      answer:
-        "You can book an appointment through our website by selecting your preferred doctor, choosing an available time slot, and completing the booking process. You can also call our 24/7 helpline or use our mobile app for quick booking.",
-    },
-    {
-      question: "What are your operating hours?",
-      answer:
-        "Our platform is available 24/7 for booking appointments and accessing services. Our customer support team is available Monday to Friday, 9 AM to 6 PM EST. For urgent medical matters, our emergency helpline operates round the clock.",
-    },
-    {
-      question: "Do you accept insurance?",
-      answer:
-        "Yes, we work with most major insurance providers including Blue Cross Blue Shield, Aetna, Cigna, UnitedHealth, and many others. You can check if your insurance is accepted by entering your details during the booking process or contacting our support team.",
-    },
-    {
-      question: "Can I cancel or reschedule my appointment?",
-      answer:
-        "Yes, you can easily cancel or reschedule your appointment up to 24 hours before the scheduled time through your patient portal, mobile app, or by calling our support line. Cancellations made less than 24 hours in advance may be subject to a cancellation fee.",
-    },
-    {
-      question: "Is telemedicine available?",
-      answer:
-        "Yes, we offer telemedicine consultations for many specialties. You can book virtual appointments through our platform and meet with your doctor via secure video call from the comfort of your home.",
-    },
-    {
-      question: "How do I access my medical records?",
-      answer:
-        "You can access your medical records, test results, and appointment history through your secure patient portal. Simply log in to your account and navigate to the 'Medical Records' section. You can also request physical copies if needed.",
-    },
-  ]
 
   return (
     <>
@@ -448,54 +412,7 @@ const Contact = memo(() => {
           </div>
         </section>
 
-        <section className="py-20 bg-white/50 backdrop-blur-sm">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Frequently Asked <span className="text-primary">Questions</span>
-              </h2>
-              <p className="text-xl text-gray-600">Quick answers to common questions about our services</p>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
-                >
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full px-6 py-6 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-2xl"
-                    aria-expanded={openFaq === index}
-                    aria-controls={`faq-answer-${index}`}
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900 pr-4">{faq.question}</h3>
-                    <div
-                      className={`flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center 
-                                transition-all duration-300 ${openFaq === index ? "bg-primary text-white rotate-180" : "text-primary"
-                        }`}
-                    >
-                      {openFaq === index ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </div>
-                  </button>
-
-                  <div
-                    id={`faq-answer-${index}`}
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                      }`}
-                    aria-hidden={openFaq !== index}
-                  >
-                    <div className="px-6 pb-6">
-                      <div className="border-t border-gray-100 pt-4">
-                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+       <FAQ />
 
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

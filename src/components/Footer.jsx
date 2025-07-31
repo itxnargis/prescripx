@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Github, Twitter, Linkedin, User, Mail, Phone, ExternalLink, Heart, Shield, Award } from 'lucide-react'
+import { Github, Twitter, Linkedin, User, Mail, Phone, ExternalLink, Heart, Shield, Award, Code, Sparkles } from 'lucide-react'
 import { assets } from '../../public/assets/assets'
 
 const Footer = memo(() => {
@@ -129,9 +129,7 @@ const Footer = memo(() => {
             </div>
           </div>
 
-          {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 py-16">
-            {/* Company Info */}
             <div className="lg:col-span-1 space-y-6">
               <div className="flex items-start space-x-3">
                 <img
@@ -267,6 +265,46 @@ const Footer = memo(() => {
                     })}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200/50 py-8">
+            <div className="flex flex-col items-center justify-center space-y-4 mb-6">
+              <div className="flex items-center space-x-3 group">
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-full 
+                                flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                    <Code className="w-5 h-5 text-primary" />
+                    <Sparkles className="w-3 h-3 text-purple-500 absolute -top-1 -right-1 animate-pulse" />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-gray-800">
+                    Crafted with <Heart className="w-4 h-4 text-red-500 inline mx-1" /> by{' '}
+                    <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent font-bold">
+                      Nargis
+                    </span>
+                  </p>
+                  <p className="text-sm text-gray-500">Full Stack Developer & Healthcare Tech Enthusiast</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-6 text-xs text-gray-400">
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span>Available for projects</span>
+                </div>
+                <div className="h-3 w-px bg-gray-300" />
+                <a
+                  href="https://nargis-khatun.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors duration-200 flex items-center space-x-1"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  <span>Portfolio</span>
+                </a>
               </div>
             </div>
           </div>

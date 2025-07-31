@@ -109,7 +109,7 @@ const SpecialityMenu = memo(() => {
 
       <section
         ref={sectionRef}
-        className="relative py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 overflow-hidden"
+        className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50/30 overflow-hidden"
         id="speciality"
         aria-labelledby="speciality-heading"
       >
