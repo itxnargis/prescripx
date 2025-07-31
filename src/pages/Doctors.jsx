@@ -1,5 +1,3 @@
-"use client"
-
 import { useContext, useEffect, useState, useCallback, memo, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext"
@@ -13,9 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle,
-  X,
   Users,
-  Award,
   Stethoscope,
   Calendar,
 } from "lucide-react"
@@ -36,10 +32,8 @@ const Doctors = memo(() => {
   const navigate = useNavigate()
   const { doctors } = useContext(AppContext)
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
-  const doctorsPerPage = 6 // Display 9 doctors per page (3 columns * 3 rows)
-
+  const doctorsPerPage = 6
   const specialties = [
     { name: "General physician", icon: "🩺" },
     { name: "Gynaecologist", icon: "👩‍⚕️" },
@@ -49,17 +43,14 @@ const Doctors = memo(() => {
     { name: "Gastroenterologist", icon: "🫀" },
   ]
 
-  // Apply filters to doctors list
   const applyFilter = useCallback(() => {
     setIsLoading(true)
     let filtered = [...doctors]
 
-    // Filter by specialty if provided
     if (speciality) {
       filtered = filtered.filter((doctor) => doctor.speciality === speciality)
     }
 
-    // Apply search term filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
       filtered = filtered.filter(
@@ -67,7 +58,6 @@ const Doctors = memo(() => {
       )
     }
 
-    // Apply availability filter
     if (selectedFilters.availability) {
       filtered = filtered.filter((doctor) => {
         if (selectedFilters.availability === "available") return doctor.available
@@ -75,12 +65,10 @@ const Doctors = memo(() => {
       })
     }
 
-    // Apply gender filter (assuming doctors have gender property)
     if (selectedFilters.gender) {
       filtered = filtered.filter((doctor) => doctor.gender === selectedFilters.gender)
     }
 
-    // Apply experience filter (assuming doctors have experience property)
     if (selectedFilters.experience) {
       filtered = filtered.filter((doctor) => {
         const exp = Number.parseInt(doctor.experience?.replace(/\D/g, "") || "0")
@@ -97,21 +85,18 @@ const Doctors = memo(() => {
       })
     }
     setFilterDoctor(filtered)
-    setCurrentPage(1) // Reset to first page on filter change
+    setCurrentPage(1)
     setIsLoading(false)
   }, [doctors, speciality, searchTerm, selectedFilters])
 
-  // Initialize filters when doctors data changes
   useEffect(() => {
     if (doctors.length > 0) {
       applyFilter()
     }
   }, [doctors, speciality, applyFilter])
 
-  // Handle specialty selection
   const handleSpecialityClick = useCallback(
     (specialtyName) => {
-      // Track user interaction
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "filter_by_specialty", {
           event_category: "doctor_search",
@@ -128,23 +113,18 @@ const Doctors = memo(() => {
     [navigate, speciality],
   )
 
-  // Handle doctor selection - Updated to prevent busy doctor booking
   const handleDoctorClick = useCallback(
     (doctorId, isAvailable) => {
-      // Prevent booking if doctor is not available
       if (!isAvailable) {
         return
       }
-      // Optimistic UI update
       setBookingStates((prev) => ({ ...prev, [doctorId]: "booking" }))
-      // Track user interaction
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "select_doctor", {
           event_category: "doctor_search",
           event_label: doctorId,
         })
       }
-      // Simulate booking process with instant feedback
       setTimeout(() => {
         navigate(`/appointment/${doctorId}`)
         window.scrollTo({ top: 0, behavior: "smooth" })
@@ -153,11 +133,9 @@ const Doctors = memo(() => {
     [navigate],
   )
 
-  // Handle search input change
   const handleSearchChange = useCallback(
     (e) => {
       setSearchTerm(e.target.value)
-      // Debounce search to avoid too many re-renders
       const timer = setTimeout(() => {
         applyFilter()
       }, 300)
@@ -166,14 +144,12 @@ const Doctors = memo(() => {
     [applyFilter],
   )
 
-  // Handle filter changes
   const handleFilterChange = useCallback(
     (filterType, value) => {
       setSelectedFilters((prev) => ({
         ...prev,
         [filterType]: prev[filterType] === value ? null : value,
       }))
-      // Apply filters after a short delay
       setTimeout(() => {
         applyFilter()
       }, 100)
@@ -181,7 +157,6 @@ const Doctors = memo(() => {
     [applyFilter],
   )
 
-  // Reset all filters
   const resetFilters = useCallback(() => {
     setSearchTerm("")
     setSelectedFilters({
@@ -194,7 +169,6 @@ const Doctors = memo(() => {
     }, 100)
   }, [applyFilter])
 
-  // Get current doctors for the page
   const indexOfLastDoctor = currentPage * doctorsPerPage
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage
   const currentDoctors = useMemo(
@@ -202,15 +176,12 @@ const Doctors = memo(() => {
     [filterDoctor, indexOfFirstDoctor, indexOfLastDoctor],
   )
 
-  // Calculate total pages
   const totalPages = Math.ceil(filterDoctor.length / doctorsPerPage)
 
-  // Change page
   const paginate = useCallback((pageNumber) => setCurrentPage(pageNumber), [])
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -231,14 +202,12 @@ const Doctors = memo(() => {
           }),
         }}
       />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20">
-        {/* Background Pattern */}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 my-16">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)]" />
           <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fillRule=%22evenodd%22%3E%3Cg fill=%22%239CA3AF%22 fillOpacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -255,7 +224,6 @@ const Doctors = memo(() => {
                 </p>
               </div>
             </div>
-            {/* Search Bar */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-8">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -272,7 +240,6 @@ const Doctors = memo(() => {
                 </div>
               </div>
             </div>
-            {/* Results Count */}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
               <Users className="w-4 h-4" />
               <span>
@@ -282,15 +249,13 @@ const Doctors = memo(() => {
             </div>
           </div>
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar - Specialties */}
             <div className="lg:w-80 flex-shrink-0">
               <button
                 onClick={() => setShowFilter(!showFilter)}
-                className={`lg:hidden w-full mb-6 flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 ${
-                  showFilter
+                className={`lg:hidden w-full mb-6 flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 ${showFilter
                     ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-500 shadow-lg"
                     : "bg-white text-gray-700 border-gray-200 hover:border-blue-300"
-                }`}
+                  }`}
               >
                 <span className="font-semibold flex items-center">
                   <Filter className="w-5 h-5 mr-2" />
@@ -309,18 +274,16 @@ const Doctors = memo(() => {
                   <div className="space-y-2">
                     <button
                       onClick={() => handleSpecialityClick(null)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-left ${
-                        !speciality
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-left ${!speciality
                           ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
                           : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
-                      }`}
+                        }`}
                     >
                       <span className="text-lg">👨‍⚕️</span>
                       <span className="font-medium">All Doctors</span>
                       <span
-                        className={`ml-auto text-xs px-2 py-1 rounded-full ${
-                          !speciality ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                        }`}
+                        className={`ml-auto text-xs px-2 py-1 rounded-full ${!speciality ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                          }`}
                       >
                         {doctors.length}
                       </span>
@@ -332,11 +295,10 @@ const Doctors = memo(() => {
                         <button
                           key={specialty.name}
                           onClick={() => handleSpecialityClick(specialty.name)}
-                          className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-left ${
-                            isActive
+                          className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 text-left ${isActive
                               ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
                               : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
-                          }`}
+                            }`}
                         >
                           <span className="text-lg">{specialty.icon}</span>
                           <span className="font-medium">{specialty.name}</span>
@@ -350,7 +312,6 @@ const Doctors = memo(() => {
                     })}
                   </div>
                 </div>
-                {/* Additional Filters */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Experience</h3>
                   <div className="space-y-2">
@@ -358,11 +319,10 @@ const Doctors = memo(() => {
                       <button
                         key={exp}
                         onClick={() => handleFilterChange("experience", exp)}
-                        className={`w-full flex items-center justify-between p-2 rounded-lg text-left text-sm transition-colors duration-200 ${
-                          selectedFilters.experience === exp
+                        className={`w-full flex items-center justify-between p-2 rounded-lg text-left text-sm transition-colors duration-200 ${selectedFilters.experience === exp
                             ? "bg-primary/10 text-primary font-medium"
                             : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                          }`}
                       >
                         <span>{exp} Years</span>
                         {selectedFilters.experience === exp && <CheckCircle className="w-4 h-4" />}
@@ -372,7 +332,6 @@ const Doctors = memo(() => {
                 </div>
               </div>
             </div>
-            {/* Main Content - Doctor Cards */}
             <div className="flex-1">
               {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -416,11 +375,10 @@ const Doctors = memo(() => {
                     <article
                       key={doctor._id}
                       className={`group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl border border-gray-100
-                                overflow-hidden transition-all duration-500 transform ${
-                                  doctor.available
-                                    ? `cursor-pointer hover:scale-[1.02] ${hoveredCard === doctor._id ? "ring-2 ring-blue-500/20" : ""}`
-                                    : "opacity-75 cursor-not-allowed"
-                                }`}
+                                overflow-hidden transition-all duration-500 transform ${doctor.available
+                          ? `cursor-pointer hover:scale-[1.02] ${hoveredCard === doctor._id ? "ring-2 ring-blue-500/20" : ""}`
+                          : "opacity-75 cursor-not-allowed"
+                        }`}
                       onClick={() => handleDoctorClick(doctor._id, doctor.available)}
                       onMouseEnter={() => doctor.available && setHoveredCard(doctor._id)}
                       onMouseLeave={() => setHoveredCard(null)}
@@ -434,11 +392,9 @@ const Doctors = memo(() => {
                         }
                       }}
                     >
-                      {/* Background Gradient - Only for available doctors */}
                       {doctor.available && (
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-indigo-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       )}
-                      {/* Doctor Image */}
                       <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 aspect-square">
                         <img
                           className={`w-full h-full object-cover transition-transform duration-700 ${doctor.available ? "group-hover:scale-110" : "grayscale"}`}
@@ -450,21 +406,18 @@ const Doctors = memo(() => {
                           width="300"
                           height="300"
                         />
-                        {/* Enhanced Availability Badge */}
                         <div
                           className={`absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full
-                                    text-xs font-medium backdrop-blur-sm transition-all duration-300 ${
-                                      doctor.available
-                                        ? "bg-green-500/90 text-white shadow-lg"
-                                        : "bg-red-500/90 text-white shadow-lg"
-                                    }`}
+                                    text-xs font-medium backdrop-blur-sm transition-all duration-300 ${doctor.available
+                              ? "bg-green-500/90 text-white shadow-lg"
+                              : "bg-red-500/90 text-white shadow-lg"
+                            }`}
                         >
                           <span
                             className={`w-2 h-2 rounded-full ${doctor.available ? "bg-green-200 animate-pulse" : "bg-red-200"}`}
                           />
                           {doctor.available ? "Available" : "Busy"}
                         </div>
-                        {/* Overlay for busy doctors */}
                         {!doctor.available && (
                           <div className="absolute inset-0 bg-gray-900/30 flex items-center justify-center">
                             <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full">
@@ -473,13 +426,11 @@ const Doctors = memo(() => {
                           </div>
                         )}
                       </div>
-                      {/* Doctor Info */}
                       <div className="p-6 space-y-3">
                         <div className="space-y-2">
                           <h3
-                            className={`text-xl font-bold transition-colors duration-300 ${
-                              doctor.available ? "text-gray-900 group-hover:text-blue-600" : "text-gray-600"
-                            }`}
+                            className={`text-xl font-bold transition-colors duration-300 ${doctor.available ? "text-gray-900 group-hover:text-blue-600" : "text-gray-600"
+                              }`}
                           >
                             Dr. {doctor.name}
                           </h3>
@@ -487,7 +438,6 @@ const Doctors = memo(() => {
                             {doctor.speciality}
                           </p>
                         </div>
-                        {/* Rating */}
                         <div className="flex items-center space-x-1 text-sm">
                           <div className="flex items-center">
                             {[...Array(5)].map((_, i) => (
@@ -496,33 +446,28 @@ const Doctors = memo(() => {
                           </div>
                           <span className="text-gray-600">(120+)</span>
                         </div>
-                        {/* Location */}
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <MapPin className="w-4 h-4" />
                           <span>{doctor.address?.line1 || "Healthcare Professional"}</span>
                         </div>
-                        {/* Quick Actions */}
                         <div className="pt-2">
                           <button
                             onClick={() => handleDoctorClick(doctor._id, doctor.available)}
                             disabled={!doctor.available || bookingStates[doctor._id] === "booking"}
                             className={`
                       w-full relative bg-blue-600 overflow-hidden rounded-xl font-semibold text-sm py-3 px-4
-                      transition-all duration-300 transform${
-                        doctor.available
-                          ? `bg-blue-600 text-white shadow-lg hover:bg-blue-700 hover:scale-105${bookingStates[doctor._id] === "booking" ? "animate-pulse" : ""}`
-                          : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      }
+                      transition-all duration-300 transform${doctor.available
+                                ? `bg-blue-600 text-white shadow-lg hover:bg-blue-700 hover:scale-105${bookingStates[doctor._id] === "booking" ? "animate-pulse" : ""}`
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                              }
                     `}
                           >
-                            {/* Animated Background Shine Effect - Only for available doctors */}
                             {doctor.available && !bookingStates[doctor._id] && (
                               <div
                                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
                                      -translate-x-full group-hover:translate-x-full transition-transform duration-700"
                               />
                             )}
-                            {/* Button Content */}
                             <div className="relative flex items-center justify-center gap-2">
                               {bookingStates[doctor._id] === "booking" ? (
                                 <>
@@ -542,7 +487,6 @@ const Doctors = memo(() => {
                                 </>
                               )}
                             </div>
-                            {/* Pulse Ring Effect - Only for available doctors */}
                             {doctor.available && !bookingStates[doctor._id] && (
                               <div
                                 className="absolute inset-0 rounded-xl ring-2 ring-blue-400 ring-opacity-0
@@ -556,7 +500,6 @@ const Doctors = memo(() => {
                   ))}
                 </div>
               )}
-              {/* Pagination */}
               {filterDoctor.length > doctorsPerPage && (
                 <div className="mt-12 flex justify-center">
                   <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -574,11 +517,10 @@ const Doctors = memo(() => {
                         key={i + 1}
                         onClick={() => paginate(i + 1)}
                         className={`relative inline-flex items-center px-4 py-2 border
-                                ${
-                                  currentPage === i + 1
-                                    ? "border-primary bg-primary text-white"
-                                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                } text-sm font-medium`}
+                                ${currentPage === i + 1
+                            ? "border-primary bg-primary text-white"
+                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                          } text-sm font-medium`}
                       >
                         {i + 1}
                       </button>

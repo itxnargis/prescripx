@@ -16,7 +16,7 @@ const Header = () => {
       };
 
       return (
-            <header className='flex flex-col md:flex-row flex-wrap bg-primary rounded-lg px-6 md:px-10 lg:px-20 relative overflow-hidden'>
+            <header className='flex flex-col md:flex-row flex-wrap bg-primary rounded-lg px-6 md:px-10 lg:px-20 my-16 relative overflow-hidden'>
                   <div className='absolute inset-0 bg-gradient-to-br from-primary via-primary to-blue-600 opacity-90'></div>
                   <div className='absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2'></div>
                   <div className='absolute bottom-0 left-0 w-80 h-80 bg-blue-400/10 rounded-full blur-2xl transform -translate-x-1/2 translate-y-1/2'></div>
@@ -27,7 +27,7 @@ const Header = () => {
                         </div>
 
                         <h1 className={`text-3xl md:text-4xl lg:text-5xl text-white font-bold leading-tight md:leading-tight lg:leading-tight mb-2 transform transition-all duration-700 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                              Book Appointment <br /> 
+                              Book Appointment <br />
                               With <span className='relative'>
                                     <span className='relative z-10'>Trusted Doctors</span>
                                     <span className='absolute bottom-1 left-0 w-full h-3 bg-white/20 rounded-full'></span>
@@ -56,10 +56,10 @@ const Header = () => {
                               </div>
                         </div>
 
-                        <button 
+                        <button
                               onClick={handleBookAppointment}
                               className={`group flex items-center gap-2 bg-white px-8 py-4 rounded-full text-gray-700 font-semibold text-sm m-auto md:m-0 hover:bg-gray-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
-                              style={{transitionDelay: '600ms'}}
+                              style={{ transitionDelay: '600ms' }}
                               aria-label="Book appointment with trusted doctors"
                         >
                               <span>Book Appointment</span>
@@ -97,10 +97,10 @@ const Header = () => {
                                     </div>
                               </div>
 
-                              <img 
-                                    className='w-full relative hover:scale-105 transition-transform duration-700 shadow-2xl' 
-                                    src={assets.header_img} 
-                                    alt="Professional healthcare team ready to serve you" 
+                              <img
+                                    className='w-full relative hover:scale-105 transition-transform duration-700 shadow-2xl'
+                                    src={assets.header_img}
+                                    alt="Professional healthcare team ready to serve you"
                                     loading="eager"
                               />
                         </div>

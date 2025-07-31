@@ -1,5 +1,3 @@
-"use client"
-
 import { Helmet } from "react-helmet"
 import { AlertTriangle, Stethoscope, Heart } from "lucide-react"
 

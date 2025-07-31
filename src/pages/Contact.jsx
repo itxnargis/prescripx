@@ -1,8 +1,6 @@
-"use client"
-
 import { useState, useEffect, useCallback, memo } from "react"
 import { assets } from "../../public/assets/assets"
-import { ChevronDown, ChevronUp, Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle, AlertTriangle } from 'lucide-react'
+import { ChevronDown, ChevronUp, Clock, Send, CheckCircle } from 'lucide-react'
 
 const Contact = memo(() => {
   const [isVisible, setIsVisible] = useState(false)
@@ -18,7 +16,6 @@ const Contact = memo(() => {
   const [openFaq, setOpenFaq] = useState(null)
   const [formErrors, setFormErrors] = useState({})
 
-  // Intersection observer for animation triggers
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -37,25 +34,25 @@ const Contact = memo(() => {
 
   const validateForm = useCallback(() => {
     const errors = {}
-    
+
     if (!formData.name.trim()) {
       errors.name = "Name is required"
     }
-    
+
     if (!formData.email.trim()) {
       errors.email = "Email is required"
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Email is invalid"
     }
-    
+
     if (!formData.subject) {
       errors.subject = "Please select a subject"
     }
-    
+
     if (!formData.message.trim()) {
       errors.message = "Message is required"
     }
-    
+
     setFormErrors(errors)
     return Object.keys(errors).length === 0
   }, [formData])
@@ -66,8 +63,7 @@ const Contact = memo(() => {
       ...prev,
       [name]: value,
     }))
-    
-    // Clear error when user types
+
     if (formErrors[name]) {
       setFormErrors((prev) => ({
         ...prev,
@@ -78,23 +74,21 @@ const Contact = memo(() => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
-    // Track form submission
+
     if (typeof window !== "undefined" && window.gtag) {
       window.gtag("event", "form_submission", {
         event_category: "engagement",
         event_label: "contact_form",
       })
     }
-    
+
     setIsSubmitting(true)
-    
+
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      
+
       setIsSubmitting(false)
       setSubmitted(true)
       setFormData({
@@ -104,7 +98,7 @@ const Contact = memo(() => {
         subject: "",
         message: "",
       })
-      
+
       setTimeout(() => setSubmitted(false), 5000)
     } catch (error) {
       console.error("Form submission error:", error)
@@ -115,30 +109,6 @@ const Contact = memo(() => {
   const toggleFaq = useCallback((index) => {
     setOpenFaq(openFaq === index ? null : index)
   }, [openFaq])
-
-  // const contactInfo = [
-  //   {
-  //     icon: <MapPin className="w-6 h-6" />,
-  //     title: "Visit Our Office",
-  //     details: ["54098 Wills Station", "Suite 350, Washington, USA"],
-  //     action: "Get Directions",
-  //     color: "bg-blue-500",
-  //   },
-  //   {
-  //     icon: <Phone className="w-6 h-6" />,
-  //     title: "Call Us",
-  //     details: ["(415) 555-3455", "Available 24/7"],
-  //     action: "Call Now",
-  //     color: "bg-green-500",
-  //   },
-  //   {
-  //     icon: <Mail className="w-6 h-6" />,
-  //     title: "Email Us",
-  //     details: ["itxnargiskhatun@gmail.com", "Quick response guaranteed"],
-  //     action: "Send Email",
-  //     color: "bg-purple-500",
-  //   },
-  // ]
 
   const faqs = [
     {
@@ -175,7 +145,6 @@ const Contact = memo(() => {
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -208,7 +177,6 @@ const Contact = memo(() => {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
-        {/* Hero Section */}
         <section className="relative overflow-hidden py-20">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -229,63 +197,13 @@ const Contact = memo(() => {
           </div>
         </section>
 
-        {/* Contact Info Cards */}
-        {/* <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8 mb-20">
-              {contactInfo.map((info, index) => (
-                <div
-                  key={index}
-                  className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 
-                           hover:-translate-y-2 border border-gray-100 hover:border-primary/20"
-                  data-aos="fade-up"
-                  data-aos-delay={index * 100}
-                >
-                  <div className="flex items-center justify-between mb-6">
-                    <div
-                      className={`inline-flex items-center justify-center w-14 h-14 ${info.color} rounded-2xl 
-                                text-white group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      {info.icon}
-                    </div>
-                    <div className="w-2 h-2 bg-primary rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors duration-300">
-                    {info.title}
-                  </h3>
-                  <div className="space-y-2 mb-6">
-                    {info.details.map((detail, idx) => (
-                      <p
-                        key={idx}
-                        className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300"
-                      >
-                        {detail}
-                      </p>
-                    ))}
-                  </div>
-                  <button
-                    className="w-full bg-gray-50 text-gray-700 px-6 py-3 rounded-xl font-medium 
-                             hover:bg-primary hover:text-white transition-all duration-300 group-hover:bg-primary/10"
-                  >
-                    {info.action}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section> */}
-
-        {/* Main Contact Section */}
         <section className="contact-content py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
-              className={`grid lg:grid-cols-2 gap-16 items-start transition-all duration-1000 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
+              className={`grid lg:grid-cols-2 gap-16 items-start transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                }`}
             >
-              {/* Left Column - Image and Info */}
               <div className="space-y-8">
-                {/* Office Image */}
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-3xl blur-2xl transform rotate-6 scale-105 opacity-30" />
                   <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -301,7 +219,6 @@ const Contact = memo(() => {
                   </div>
                 </div>
 
-                {/* Office Hours */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
                     <Clock className="w-5 h-5 text-primary" />
@@ -329,7 +246,6 @@ const Contact = memo(() => {
                   </div>
                 </div>
 
-                {/* Careers Section */}
                 <div className="bg-gradient-to-r from-primary/5 to-blue-500/5 rounded-2xl p-8 border border-primary/10">
                   <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                     <span className="w-3 h-3 bg-primary rounded-full mr-3" />
@@ -350,11 +266,9 @@ const Contact = memo(() => {
                 </div>
               </div>
 
-              {/* Right Column - Contact Form */}
               <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
                 <h2 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h2>
 
-                {/* Success Message */}
                 {submitted && (
                   <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center">
                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
@@ -369,10 +283,8 @@ const Contact = memo(() => {
                   </div>
                 )}
 
-                {/* Contact Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Name Field */}
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name <span className="text-red-500">*</span>
@@ -383,11 +295,10 @@ const Contact = memo(() => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${
-                          formErrors.name
+                        className={`w-full px-4 py-3 rounded-xl border ${formErrors.name
                             ? "border-red-300 bg-red-50 focus:ring-red-500"
                             : "border-gray-300 focus:border-primary focus:ring-primary/20"
-                        } transition-all duration-300 outline-none focus:ring-2`}
+                          } transition-all duration-300 outline-none focus:ring-2`}
                         placeholder="Enter your full name"
                         aria-describedby={formErrors.name ? "name-error" : undefined}
                       />
@@ -398,7 +309,6 @@ const Contact = memo(() => {
                       )}
                     </div>
 
-                    {/* Email Field */}
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                         Email Address <span className="text-red-500">*</span>
@@ -409,11 +319,10 @@ const Contact = memo(() => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${
-                          formErrors.email
+                        className={`w-full px-4 py-3 rounded-xl border ${formErrors.email
                             ? "border-red-300 bg-red-50 focus:ring-red-500"
                             : "border-gray-300 focus:border-primary focus:ring-primary/20"
-                        } transition-all duration-300 outline-none focus:ring-2`}
+                          } transition-all duration-300 outline-none focus:ring-2`}
                         placeholder="Enter your email"
                         aria-describedby={formErrors.email ? "email-error" : undefined}
                       />
@@ -426,7 +335,6 @@ const Contact = memo(() => {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Phone Field */}
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                         Phone Number
@@ -442,7 +350,6 @@ const Contact = memo(() => {
                       />
                     </div>
 
-                    {/* Subject Field */}
                     <div>
                       <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                         Subject <span className="text-red-500">*</span>
@@ -452,11 +359,10 @@ const Contact = memo(() => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border ${
-                          formErrors.subject
+                        className={`w-full px-4 py-3 rounded-xl border ${formErrors.subject
                             ? "border-red-300 bg-red-50 focus:ring-red-500"
                             : "border-gray-300 focus:border-primary focus:ring-primary/20"
-                        } transition-all duration-300 outline-none focus:ring-2`}
+                          } transition-all duration-300 outline-none focus:ring-2`}
                         aria-describedby={formErrors.subject ? "subject-error" : undefined}
                       >
                         <option value="">Select a subject</option>
@@ -474,7 +380,6 @@ const Contact = memo(() => {
                     </div>
                   </div>
 
-                  {/* Message Field */}
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                       Message <span className="text-red-500">*</span>
@@ -485,11 +390,10 @@ const Contact = memo(() => {
                       value={formData.message}
                       onChange={handleInputChange}
                       rows={6}
-                      className={`w-full px-4 py-3 rounded-xl border ${
-                        formErrors.message
+                      className={`w-full px-4 py-3 rounded-xl border ${formErrors.message
                           ? "border-red-300 bg-red-50 focus:ring-red-500"
                           : "border-gray-300 focus:border-primary focus:ring-primary/20"
-                      } transition-all duration-300 outline-none focus:ring-2 resize-none`}
+                        } transition-all duration-300 outline-none focus:ring-2 resize-none`}
                       placeholder="Tell us how we can help you..."
                       aria-describedby={formErrors.message ? "message-error" : undefined}
                     />
@@ -500,7 +404,6 @@ const Contact = memo(() => {
                     )}
                   </div>
 
-                  {/* Privacy Policy */}
                   <div className="flex items-start space-x-3">
                     <div className="flex items-center h-5">
                       <input
@@ -519,7 +422,6 @@ const Contact = memo(() => {
                     </label>
                   </div>
 
-                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -546,7 +448,6 @@ const Contact = memo(() => {
           </div>
         </section>
 
-        {/* FAQ Section */}
         <section className="py-20 bg-white/50 backdrop-blur-sm">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -571,9 +472,8 @@ const Contact = memo(() => {
                     <h3 className="text-lg font-semibold text-gray-900 pr-4">{faq.question}</h3>
                     <div
                       className={`flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center 
-                                transition-all duration-300 ${
-                                  openFaq === index ? "bg-primary text-white rotate-180" : "text-primary"
-                                }`}
+                                transition-all duration-300 ${openFaq === index ? "bg-primary text-white rotate-180" : "text-primary"
+                        }`}
                     >
                       {openFaq === index ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </div>
@@ -581,9 +481,8 @@ const Contact = memo(() => {
 
                   <div
                     id={`faq-answer-${index}`}
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      openFaq === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                      }`}
                     aria-hidden={openFaq !== index}
                   >
                     <div className="px-6 pb-6">
@@ -598,7 +497,6 @@ const Contact = memo(() => {
           </div>
         </section>
 
-        {/* Map Section */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
@@ -619,31 +517,6 @@ const Contact = memo(() => {
           </div>
         </section>
 
-        {/* Emergency Contact Section */}
-        {/* <section className="py-20 bg-gradient-to-r from-primary/5 via-blue-500/5 to-primary/5">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Need Immediate Assistance?</h2>
-            <p className="text-xl text-gray-600 mb-8">Our support team is available 24/7 to help with urgent matters</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary/90 
-                         hover:shadow-lg transform hover:scale-105 transition-all duration-300 
-                         inline-flex items-center justify-center"
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                <span>Call Emergency Line</span>
-              </button>
-              <button
-                className="border-2 border-primary text-primary px-8 py-4 rounded-full font-semibold 
-                         hover:bg-primary hover:text-white transition-all duration-300 
-                         inline-flex items-center justify-center"
-              >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                <span>Live Chat Support</span>
-              </button>
-            </div>
-          </div>
-        </section> */}
       </div>
     </>
   )

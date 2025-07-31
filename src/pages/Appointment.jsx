@@ -1,13 +1,23 @@
-"use client"
-
 import { useContext, useEffect, useState, useCallback, memo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext"
-import { assets } from "../../public/assets/assets"
 import { toast } from "react-toastify"
 import axios from "axios"
 import RelatedDoctors from "../components/RelatedDoctors"
-import { Calendar, Clock, MapPin, Star, Shield, Award, Users, CheckCircle, ArrowRight, Phone, MessageSquare, CreditCard, Info, ChevronRight, Stethoscope, Clipboard, Heart, AlertTriangle, User } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  Star,
+  Shield,
+  Award,
+  Users,
+  CheckCircle,
+  ArrowRight,
+  CreditCard,
+  Info,
+  AlertTriangle,
+  User,
+} from "lucide-react"
 
 const Appointment = memo(() => {
   const { docId } = useParams()
@@ -24,24 +34,20 @@ const Appointment = memo(() => {
   const [showBookingConfirm, setShowBookingConfirm] = useState(false)
   const [activeTab, setActiveTab] = useState("about")
 
-  // Fetch doctor information
   const fetchDocInfo = useCallback(() => {
     const docInfo = doctors.find((doc) => doc._id === docId)
     setDocInfo(docInfo)
     setIsLoading(false)
   }, [doctors, docId])
 
-  // Generate available time slots
   const getAvailableSlots = useCallback(() => {
     if (!docInfo) return
-
     setDocSlots([])
-    let today = new Date()
-
+    const today = new Date()
     for (let i = 0; i < 7; i++) {
-      let currentDate = new Date(today)
+      const currentDate = new Date(today)
       currentDate.setDate(today.getDate() + i)
-      let endTime = new Date(currentDate)
+      const endTime = new Date(currentDate)
       endTime.setHours(21, 0, 0, 0)
 
       if (i === 0) {
@@ -51,48 +57,40 @@ const Appointment = memo(() => {
         currentDate.setHours(10, 0)
       }
 
-      let timeSlots = []
-
+      const timeSlots = []
       while (currentDate < endTime) {
         const formattedTime = currentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        let day = currentDate.getDate()
-        let month = currentDate.getMonth() + 1
-        let year = currentDate.getFullYear()
+        const day = currentDate.getDate()
+        const month = currentDate.getMonth() + 1
+        const year = currentDate.getFullYear()
         const slotDate = `${day}_${month}_${year}`
-
         const isSlotAvailable = !(
           docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(formattedTime)
         )
-
         if (isSlotAvailable) {
           timeSlots.push({
             dateTime: new Date(currentDate),
             time: formattedTime,
           })
         }
-
         currentDate.setMinutes(currentDate.getMinutes() + 30)
       }
-
       if (timeSlots.length > 0) {
         setDocSlots((prev) => [...prev, timeSlots])
       }
     }
   }, [docInfo])
 
-  // Book appointment handler
   const bookAppointment = useCallback(async () => {
     if (!token) {
       toast.warn("Login to book an appointment")
       return navigate("/login")
     }
-
     if (!slotTime) {
       toast.error("Please select a time slot")
       return
     }
 
-    // Track user interaction
     if (typeof window !== "undefined" && window.gtag) {
       window.gtag("event", "book_appointment", {
         event_category: "engagement",
@@ -101,12 +99,11 @@ const Appointment = memo(() => {
     }
 
     setIsBooking(true)
-
     try {
       const date = docSlots[slotIndex][0].dateTime
-      let day = date.getDate()
-      let month = date.getMonth() + 1
-      let year = date.getFullYear()
+      const day = date.getDate()
+      const month = date.getMonth() + 1
+      const year = date.getFullYear()
       const slotDate = `${day}_${month}_${year}`
 
       const { data } = await axios.post(
@@ -132,21 +129,17 @@ const Appointment = memo(() => {
     }
   }, [docId, docSlots, getDoctorsData, navigate, slotIndex, slotTime, token, backendUrl])
 
-  // Initialize data on component mount
   useEffect(() => {
     if (doctors.length > 0) {
       fetchDocInfo()
     }
   }, [doctors, docId, fetchDocInfo])
-
-  // Generate slots when doctor info changes
   useEffect(() => {
     if (docInfo) {
       getAvailableSlots()
     }
   }, [docInfo, getAvailableSlots])
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -155,8 +148,8 @@ const Appointment = memo(() => {
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                  <div className="flex space-x-6">
-                    <div className="w-48 h-48 bg-gray-200 rounded-2xl" />
+                  <div className="flex flex-col sm:flex-row space-y-6 sm:space-y-0 sm:space-x-6">
+                    <div className="w-48 h-48 bg-gray-200 rounded-2xl mx-auto sm:mx-0" />
                     <div className="flex-1 space-y-4">
                       <div className="h-8 bg-gray-200 rounded w-3/4" />
                       <div className="h-4 bg-gray-200 rounded w-1/2" />
@@ -165,10 +158,10 @@ const Appointment = memo(() => {
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-2xl py-6 shadow-sm border border-gray-100">
                 <div className="space-y-4">
                   <div className="h-6 bg-gray-200 rounded w-1/2" />
-                  <div className="grid grid-cols-7 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
                     {[...Array(7)].map((_, i) => (
                       <div key={i} className="h-16 bg-gray-200 rounded-lg" />
                     ))}
@@ -182,10 +175,9 @@ const Appointment = memo(() => {
     )
   }
 
-  // Doctor not found state
   if (!docInfo) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
         <div className="text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Info className="w-8 h-8 text-red-600" />
@@ -205,7 +197,6 @@ const Appointment = memo(() => {
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -232,11 +223,9 @@ const Appointment = memo(() => {
           }),
         }}
       />
-
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
-        {/* Booking Confirmation Modal */}
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 py-12">
         {showBookingConfirm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
             <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
@@ -251,16 +240,14 @@ const Appointment = memo(() => {
           </div>
         )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto py-8 md:py-12">
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Doctor Info Section */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-8">
-                  <div className="flex flex-col md:flex-row gap-8">
-                    {/* Doctor Image */}
-                    <div className="relative">
-                      <div className="w-48 h-48 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
+                <div className="p-6 sm:p-8">
+                  <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
                         <img
                           className="w-full h-full object-cover"
                           src={docInfo.image || "/placeholder.svg?height=192&width=192&query=doctor portrait"}
@@ -275,19 +262,16 @@ const Appointment = memo(() => {
                         <span>Available</span>
                       </div>
                     </div>
-
-                    {/* Doctor Details */}
-                    <div className="flex-1 space-y-6">
+                    <div className="flex-1 space-y-4 text-center md:text-left">
                       <div>
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h1 className="text-3xl font-bold text-gray-900">Dr. {docInfo.name}</h1>
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dr. {docInfo.name}</h1>
                           <div className="flex items-center space-x-1">
                             <Shield className="w-5 h-5 text-blue-600" />
                             <span className="text-sm text-blue-600 font-medium">Verified</span>
                           </div>
                         </div>
-
-                        <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 mb-4">
                           <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
                             {docInfo.speciality}
                           </span>
@@ -299,8 +283,7 @@ const Appointment = memo(() => {
                             <span>{docInfo.experience}</span>
                           </span>
                         </div>
-
-                        <div className="flex items-center space-x-6 mb-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-6 mb-6">
                           <div className="flex items-center space-x-2">
                             <div className="flex items-center space-x-1">
                               {[...Array(5)].map((_, i) => (
@@ -315,19 +298,15 @@ const Appointment = memo(() => {
                           </div>
                         </div>
                       </div>
-
-                      {/* Doctor Bio */}
                       <div className="space-y-3">
-                        <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center justify-center md:justify-start space-x-2">
                           <Info className="w-5 h-5 text-primary" />
                           <span>About Dr. {docInfo.name}</span>
                         </h3>
                         <p className="text-gray-600 leading-relaxed">{docInfo.about}</p>
                       </div>
-
-                      {/* Fee Information */}
                       <div className="bg-gradient-to-r from-primary/5 to-blue-500/5 rounded-xl p-4 border border-primary/10">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                               <CreditCard className="w-5 h-5 text-primary" />
@@ -346,39 +325,21 @@ const Appointment = memo(() => {
                           </div>
                         </div>
                       </div>
-
-                      {/* Quick Actions */}
-                      <div className="flex space-x-3">
-                        <button className="flex-1 flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 px-4 py-3 rounded-lg font-medium hover:bg-blue-100 transition-colors duration-200">
-                          <Phone className="w-4 h-4" />
-                          <span>Call Now</span>
-                        </button>
-                        <button className="flex-1 flex items-center justify-center space-x-2 bg-green-50 text-green-600 px-4 py-3 rounded-lg font-medium hover:bg-green-100 transition-colors duration-200">
-                          <MessageSquare className="w-4 h-4" />
-                          <span>Message</span>
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Tabs Navigation */}
                 <div className="border-t border-gray-200">
-                  <div className="flex overflow-x-auto scrollbar-hide">
+                  <div className="flex sm:justify-center lg:justify-start">
                     {[
                       { id: "about", label: "About", icon: <User className="w-4 h-4" /> },
-                      { id: "services", label: "Services", icon: <Stethoscope className="w-4 h-4" /> },
-                      { id: "reviews", label: "Reviews", icon: <Star className="w-4 h-4" /> },
-                      { id: "faq", label: "FAQ", icon: <Clipboard className="w-4 h-4" /> },
                     ].map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center space-x-2 px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
-                          activeTab === tab.id
+                        className={`flex items-center space-x-2 px-4 sm:px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors duration-200 ${activeTab === tab.id
                             ? "text-primary border-b-2 border-primary"
                             : "text-gray-600 hover:text-gray-900"
-                        }`}
+                          }`}
                       >
                         {tab.icon}
                         <span>{tab.label}</span>
@@ -386,9 +347,7 @@ const Appointment = memo(() => {
                     ))}
                   </div>
                 </div>
-
-                {/* Tab Content */}
-                <div className="p-8">
+                <div className="p-6 sm:p-8">
                   {activeTab === "about" && (
                     <div className="space-y-6">
                       <div>
@@ -399,9 +358,7 @@ const Appointment = memo(() => {
                               <Award className="w-5 h-5 text-blue-600" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">
-                                {docInfo.degree || "MD in Internal Medicine"}
-                              </p>
+                              <p className="font-medium text-gray-900">{docInfo.degree || "MD in Internal Medicine"}</p>
                               <p className="text-sm text-gray-600">Harvard Medical School (2010-2014)</p>
                             </div>
                           </li>
@@ -416,10 +373,9 @@ const Appointment = memo(() => {
                           </li>
                         </ul>
                       </div>
-
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Specializations</h3>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {[
                             "General Consultations",
                             "Preventive Care",
@@ -433,7 +389,6 @@ const Appointment = memo(() => {
                           ))}
                         </div>
                       </div>
-
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Languages</h3>
                         <div className="flex flex-wrap gap-3">
@@ -449,198 +404,22 @@ const Appointment = memo(() => {
                       </div>
                     </div>
                   )}
-
-                  {activeTab === "services" && (
-                    <div className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {[
-                          {
-                            name: "General Consultation",
-                            price: `${currencySymbol}${docInfo.fees}`,
-                            duration: "30 min",
-                            description: "Comprehensive health assessment and medical advice",
-                          },
-                          {
-                            name: "Follow-up Visit",
-                            price: `${currencySymbol}${Math.round(docInfo.fees * 0.7)}`,
-                            duration: "20 min",
-                            description: "Review progress and adjust treatment plans",
-                          },
-                          {
-                            name: "Specialized Consultation",
-                            price: `${currencySymbol}${Math.round(docInfo.fees * 1.5)}`,
-                            duration: "45 min",
-                            description: "In-depth consultation for specific health concerns",
-                          },
-                          {
-                            name: "Telemedicine",
-                            price: `${currencySymbol}${Math.round(docInfo.fees * 0.8)}`,
-                            duration: "30 min",
-                            description: "Virtual consultation from the comfort of your home",
-                          },
-                        ].map((service, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-xl p-6 border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-300"
-                          >
-                            <div className="flex justify-between items-start mb-4">
-                              <h4 className="text-lg font-semibold text-gray-900">{service.name}</h4>
-                              <span className="text-lg font-bold text-primary">{service.price}</span>
-                            </div>
-                            <p className="text-gray-600 mb-4">{service.description}</p>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                <Clock className="w-4 h-4" />
-                                <span>{service.duration}</span>
-                              </div>
-                              <button className="text-primary font-medium text-sm flex items-center space-x-1 hover:text-primary/80 transition-colors duration-200">
-                                <span>Book Now</span>
-                                <ChevronRight className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === "reviews" && (
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center space-x-4">
-                          <div className="text-5xl font-bold text-gray-900">4.9</div>
-                          <div>
-                            <div className="flex items-center space-x-1 mb-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                              ))}
-                            </div>
-                            <p className="text-sm text-gray-600">Based on 120+ reviews</p>
-                          </div>
-                        </div>
-                        <button className="bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors duration-200">
-                          Write a Review
-                        </button>
-                      </div>
-
-                      <div className="space-y-6">
-                        {[
-                          {
-                            name: "Sarah Johnson",
-                            date: "2 weeks ago",
-                            rating: 5,
-                            comment:
-                              "Dr. Smith is an exceptional doctor. Very thorough and takes time to listen to all concerns. Highly recommend!",
-                          },
-                          {
-                            name: "Michael Chen",
-                            date: "1 month ago",
-                            rating: 5,
-                            comment:
-                              "Great experience with Dr. Smith. Very knowledgeable and explained everything clearly. The office staff was also very friendly.",
-                          },
-                          {
-                            name: "Emily Davis",
-                            date: "2 months ago",
-                            rating: 4,
-                            comment:
-                              "Dr. Smith is very professional and caring. The only reason for 4 stars is the wait time was a bit long, but the care received was excellent.",
-                          },
-                        ].map((review, index) => (
-                          <div
-                            key={index}
-                            className="bg-gray-50 rounded-xl p-6 border border-gray-100 hover:border-gray-200 transition-all duration-300"
-                          >
-                            <div className="flex justify-between mb-3">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium">
-                                  {review.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <p className="font-medium text-gray-900">{review.name}</p>
-                                  <p className="text-xs text-gray-500">{review.date}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                {[...Array(review.rating)].map((_, i) => (
-                                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                ))}
-                                {[...Array(5 - review.rating)].map((_, i) => (
-                                  <Star key={i} className="w-4 h-4 text-gray-300" />
-                                ))}
-                              </div>
-                            </div>
-                            <p className="text-gray-600">{review.comment}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="text-center">
-                        <button className="text-primary font-medium flex items-center space-x-2 mx-auto hover:text-primary/80 transition-colors duration-200">
-                          <span>View All Reviews</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === "faq" && (
-                    <div className="space-y-6">
-                      <div className="space-y-4">
-                        {[
-                          {
-                            question: "What insurance plans do you accept?",
-                            answer:
-                              "We accept most major insurance plans including Blue Cross Blue Shield, Aetna, Cigna, UnitedHealthcare, and Medicare. Please contact our office to verify your specific plan coverage.",
-                          },
-                          {
-                            question: "How long are typical appointments?",
-                            answer:
-                              "Initial consultations are typically 30 minutes, while follow-up appointments are usually 15-20 minutes. Specialized consultations may take up to 45 minutes depending on the complexity of the case.",
-                          },
-                          {
-                            question: "Do you offer telemedicine appointments?",
-                            answer:
-                              "Yes, we offer secure video consultations for both new and existing patients. Telemedicine appointments can be booked directly through our online portal.",
-                          },
-                          {
-                            question: "What is your cancellation policy?",
-                            answer:
-                              "We request that you notify us at least 24 hours in advance if you need to cancel or reschedule your appointment. Late cancellations or no-shows may incur a fee.",
-                          },
-                        ].map((faq, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-xl p-6 border border-gray-200 hover:border-primary/30 hover:shadow-md transition-all duration-300"
-                          >
-                            <h4 className="text-lg font-semibold text-gray-900 mb-3">{faq.question}</h4>
-                            <p className="text-gray-600">{faq.answer}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
-
-            {/* Booking Section */}
             <div className="space-y-6">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
                   <Calendar className="w-5 h-5 text-primary" />
                   <span>Book Appointment</span>
                 </h2>
-
-                {/* Date Selection */}
                 <div className="space-y-4 mb-6">
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Select Date</h3>
-                  <div className="grid grid-cols-7 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
                     {docSlots.map((daySlots, index) => {
                       const date = daySlots[0]?.dateTime
                       const isSelected = slotIndex === index
                       const isToday = index === 0
-
                       return (
                         <button
                           key={index}
@@ -648,11 +427,10 @@ const Appointment = memo(() => {
                             setSlotIndex(index)
                             setSlotTime("")
                           }}
-                          className={`relative p-3 rounded-xl text-center transition-all duration-200 ${
-                            isSelected
+                          className={`relative p-3 rounded-xl text-center transition-all duration-200 ${isSelected
                               ? "bg-primary text-white shadow-lg scale-105"
                               : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:scale-105"
-                          }`}
+                            }`}
                           aria-label={`Select date ${date?.toLocaleDateString()}`}
                         >
                           {isToday && <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />}
@@ -663,8 +441,6 @@ const Appointment = memo(() => {
                     })}
                   </div>
                 </div>
-
-                {/* Time Selection */}
                 {docSlots.length > 0 && docSlots[slotIndex] && (
                   <div className="space-y-4 mb-6">
                     <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide flex items-center space-x-2">
@@ -678,11 +454,10 @@ const Appointment = memo(() => {
                           <button
                             key={index}
                             onClick={() => setSlotTime(slot.time)}
-                            className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              isSelected
+                            className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${isSelected
                                 ? "bg-primary text-white shadow-md scale-105"
                                 : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:scale-105"
-                            }`}
+                              }`}
                             aria-label={`Select time ${slot.time}`}
                           >
                             {slot.time}
@@ -692,8 +467,6 @@ const Appointment = memo(() => {
                     </div>
                   </div>
                 )}
-
-                {/* Booking Summary */}
                 {slotTime && (
                   <div className="bg-gradient-to-r from-primary/5 to-blue-500/5 rounded-xl p-4 mb-6 border border-primary/10">
                     <h4 className="font-semibold text-gray-900 mb-2">Booking Summary</h4>
@@ -727,15 +500,13 @@ const Appointment = memo(() => {
                     </div>
                   </div>
                 )}
-
-                {/* Book Button */}
                 <button
                   onClick={bookAppointment}
                   disabled={!slotTime || isBooking}
-                  className="w-full bg-gradient-to-r from-primary to-blue-600 text-white py-4 px-6 rounded-xl 
-                           font-semibold hover:from-blue-600 hover:to-primary disabled:opacity-50 
-                           disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 
-                           disabled:transform-none flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-primary to-blue-600 text-white py-4 px-6 rounded-xl
+                            font-semibold hover:from-blue-600 hover:to-primary disabled:opacity-50
+                            disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105
+                            disabled:transform-none flex items-center justify-center space-x-2"
                   aria-label="Book appointment"
                 >
                   {isBooking ? (
@@ -750,16 +521,12 @@ const Appointment = memo(() => {
                     </>
                   )}
                 </button>
-
-                {/* Policy Note */}
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-xs text-blue-700 text-center">
                     <Shield className="w-3 h-3 inline mr-1" />
                     Your booking is protected by our cancellation policy
                   </p>
                 </div>
-
-                {/* Additional Info */}
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center space-x-3 text-sm text-gray-600">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -777,8 +544,6 @@ const Appointment = memo(() => {
               </div>
             </div>
           </div>
-
-          {/* Related Doctors Section */}
           <div className="mt-16">
             <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
           </div>
@@ -789,5 +554,4 @@ const Appointment = memo(() => {
 })
 
 Appointment.displayName = "Appointment"
-
 export default Appointment

@@ -1,5 +1,3 @@
-"use client"
-
 import { useContext, useEffect, useState, useCallback, memo } from "react"
 import { AppContext } from "../context/AppContext"
 import axios from "axios"
@@ -36,7 +34,6 @@ const MyAppointments = memo(() => {
 
   const months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-  // Format slot date
   const slotDateFormat = useCallback(
     (slotDate) => {
       const dateArray = slotDate.split("_")
@@ -45,7 +42,6 @@ const MyAppointments = memo(() => {
     [months],
   )
 
-  // Get user appointments
   const getUserAppointments = useCallback(async () => {
     try {
       setIsLoading(true)
@@ -56,18 +52,13 @@ const MyAppointments = memo(() => {
 
       if (data.success) {
         const sortedAppointments = data.appointments.sort((a, b) => {
-          // Sort by date (most recent first)
           const dateA = a.slotDate.split("_").map(Number)
           const dateB = b.slotDate.split("_").map(Number)
 
-          // Compare year
           if (dateA[2] !== dateB[2]) return dateB[2] - dateA[2]
-          // Compare month
           if (dateA[1] !== dateB[1]) return dateB[1] - dateA[1]
-          // Compare day
           if (dateA[0] !== dateB[0]) return dateB[0] - dateA[0]
 
-          // If same date, sort by time
           return a.slotTime.localeCompare(b.slotTime)
         })
 
@@ -82,7 +73,6 @@ const MyAppointments = memo(() => {
     }
   }, [backendUrl, token, activeFilter])
 
-  // Apply filter to appointments
   const applyFilter = useCallback((appointments, filter) => {
     switch (filter) {
       case "upcoming":
@@ -99,7 +89,6 @@ const MyAppointments = memo(() => {
     }
   }, [])
 
-  // Handle filter change
   const handleFilterChange = useCallback(
     (filter) => {
       setActiveFilter(filter)
@@ -109,7 +98,6 @@ const MyAppointments = memo(() => {
     [appointments, applyFilter],
   )
 
-  // Cancel appointment
   const cancelAppointment = useCallback(
     async (appointmentId) => {
       try {
@@ -126,7 +114,6 @@ const MyAppointments = memo(() => {
           getUserAppointments()
           getDoctorsData()
 
-          // Track cancellation
           if (typeof window !== "undefined" && window.gtag) {
             window.gtag("event", "cancel_appointment", {
               event_category: "appointment",
@@ -146,7 +133,6 @@ const MyAppointments = memo(() => {
     [backendUrl, token, getUserAppointments, getDoctorsData],
   )
 
-  // Initialize Razorpay payment
   const initPay = useCallback(
     (order) => {
       const options = {
@@ -167,7 +153,6 @@ const MyAppointments = memo(() => {
               getUserAppointments()
               toast.success("Payment successful!")
 
-              // Track payment
               if (typeof window !== "undefined" && window.gtag) {
                 window.gtag("event", "payment_complete", {
                   event_category: "appointment",
@@ -182,14 +167,12 @@ const MyAppointments = memo(() => {
         },
       }
 
-      // @ts-ignore - Razorpay is loaded via script tag
       const rzp = new window.Razorpay(options)
       rzp.open()
     },
     [backendUrl, token, getUserAppointments],
   )
 
-  // Process payment
   const appointmentRazorpay = useCallback(
     async (appointmentId) => {
       try {
@@ -216,7 +199,6 @@ const MyAppointments = memo(() => {
     [backendUrl, token, initPay],
   )
 
-  // Get status configuration for appointment
   const getStatusConfig = useCallback((appointment) => {
     if (appointment.cancelled) {
       return {
@@ -257,7 +239,6 @@ const MyAppointments = memo(() => {
     }
   }, [])
 
-  // Check if appointment is upcoming
   const isUpcoming = useCallback((appointment) => {
     if (appointment.cancelled || appointment.isCompleted) return false
 
@@ -270,7 +251,6 @@ const MyAppointments = memo(() => {
     return appointmentDate > now
   }, [])
 
-  // Initialize data on component mount
   useEffect(() => {
     if (token) {
       getUserAppointments()
@@ -279,7 +259,10 @@ const MyAppointments = memo(() => {
     }
   }, [token, getUserAppointments, navigate])
 
-  // Loading state
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -304,7 +287,6 @@ const MyAppointments = memo(() => {
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -317,15 +299,13 @@ const MyAppointments = memo(() => {
         }}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header Section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 my-16">
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Appointments</h1>
             <p className="text-gray-600">Manage your upcoming and past appointments</p>
           </div>
 
-          {/* Filter Controls */}
           <div className="relative">
             <button
               onClick={() => setShowFilterMenu(!showFilterMenu)}
@@ -345,7 +325,6 @@ const MyAppointments = memo(() => {
               {showFilterMenu ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
-            {/* Filter Dropdown */}
             {showFilterMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-10">
                 <div className="py-1">
@@ -358,11 +337,10 @@ const MyAppointments = memo(() => {
                     <button
                       key={filter.id}
                       onClick={() => handleFilterChange(filter.id)}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        activeFilter === filter.id
+                      className={`block w-full text-left px-4 py-2 text-sm ${activeFilter === filter.id
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-gray-700 hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       {filter.label}
                     </button>
@@ -373,7 +351,6 @@ const MyAppointments = memo(() => {
           </div>
         </div>
 
-        {/* Appointments List */}
         <div className="space-y-6">
           {filteredAppointments.length === 0 ? (
             <div className="text-center py-16">
@@ -408,13 +385,11 @@ const MyAppointments = memo(() => {
               return (
                 <div
                   key={appointment._id}
-                  className={`bg-white rounded-2xl shadow-sm border transition-all duration-200 hover:shadow-md ${
-                    statusConfig.borderColor
-                  } ${isUpcomingAppointment ? "border-l-4 border-l-primary" : ""}`}
+                  className={`bg-white rounded-2xl shadow-sm border transition-all duration-200 hover:shadow-md ${statusConfig.borderColor
+                    } ${isUpcomingAppointment ? "border-l-4 border-l-primary" : ""}`}
                 >
                   <div className="p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
-                      {/* Doctor Image */}
                       <div className="flex-shrink-0">
                         <img
                           className="w-24 h-24 rounded-xl object-cover bg-gradient-to-br from-blue-50 to-indigo-50"
@@ -426,7 +401,6 @@ const MyAppointments = memo(() => {
                         />
                       </div>
 
-                      {/* Appointment Details */}
                       <div className="flex-1 space-y-3">
                         <div>
                           <h3 className="text-xl font-bold text-gray-900">Dr. {appointment.docData.name}</h3>
@@ -453,9 +427,7 @@ const MyAppointments = memo(() => {
                         </div>
                       </div>
 
-                      {/* Actions */}
                       <div className="flex flex-col space-y-3 lg:min-w-[200px]">
-                        {/* Paid Status */}
                         {!appointment.cancelled && appointment.payment && !appointment.isCompleted && (
                           <>
                             <div
@@ -484,7 +456,6 @@ const MyAppointments = memo(() => {
                           </>
                         )}
 
-                        {/* Payment and Cancel Buttons */}
                         {!appointment.cancelled && !appointment.payment && !appointment.isCompleted && (
                           <>
                             <button
@@ -528,7 +499,6 @@ const MyAppointments = memo(() => {
                           </>
                         )}
 
-                        {/* Cancelled Status */}
                         {appointment.cancelled && !appointment.isCompleted && (
                           <div
                             className={`px-4 py-2 rounded-lg text-center font-medium ${statusConfig.bgColor} ${statusConfig.color}`}
@@ -537,7 +507,6 @@ const MyAppointments = memo(() => {
                           </div>
                         )}
 
-                        {/* Completed Status */}
                         {appointment.isCompleted && (
                           <div
                             className={`px-4 py-2 rounded-lg text-center font-medium ${statusConfig.bgColor} ${statusConfig.color}`}
@@ -554,7 +523,6 @@ const MyAppointments = memo(() => {
           )}
         </div>
 
-        {/* Book New Appointment CTA */}
         {filteredAppointments.length > 0 && (
           <div className="mt-12 text-center">
             <button

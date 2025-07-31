@@ -1,15 +1,12 @@
-"use client"
-
-import { useState, useEffect, useCallback, memo } from "react"
+import { useState, useEffect, memo } from "react"
 import { assets } from "../../public/assets/assets"
-import { Zap, Users, Shield, Award, ArrowRight, CheckCircle, Heart, Sparkles } from 'lucide-react'
+import { Zap, Users, Shield, Award, Heart } from 'lucide-react'
 
 const About = memo(() => {
   const [isVisible, setIsVisible] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
 
-  // Intersection observer for animation triggers
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -28,7 +25,6 @@ const About = memo(() => {
     }
   }, [])
 
-  // Scroll handler with debouncing
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY
@@ -39,7 +35,6 @@ const About = memo(() => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Rotate through features every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveFeature((prev) => (prev + 1) % features.length)
@@ -78,7 +73,6 @@ const About = memo(() => {
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -111,7 +105,6 @@ const About = memo(() => {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
-        {/* Hero Section */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
@@ -134,15 +127,12 @@ const About = memo(() => {
           </div>
         </section>
 
-        {/* Main Content Section */}
         <section className="animate-on-scroll py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
-              className={`grid lg:grid-cols-2 gap-16 items-center transition-all duration-1000 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
+              className={`grid lg:grid-cols-2 gap-16 items-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                }`}
             >
-              {/* Image Section */}
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-3xl blur-2xl transform rotate-6 scale-105 opacity-30" />
                 <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -158,7 +148,6 @@ const About = memo(() => {
                 </div>
               </div>
 
-              {/* Content Section */}
               <div className="space-y-8">
                 <div className="space-y-6">
                   <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
@@ -178,7 +167,6 @@ const About = memo(() => {
                     </p>
                   </div>
 
-                  {/* Vision Card */}
                   <div className="bg-gradient-to-r from-primary/5 to-blue-500/5 rounded-2xl p-8 border border-primary/10">
                     <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                       <span className="w-3 h-3 bg-primary rounded-full mr-3" />
@@ -196,32 +184,6 @@ const About = memo(() => {
           </div>
         </section>
 
-        {/* Stats Section */}
-        {/* <section className="py-20 bg-white/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="text-center group transform transition-all duration-300 hover:scale-105"
-                  data-aos="fade-up"
-                  data-aos-delay={index * 100}
-                >
-                  <div
-                    className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl text-2xl mb-4 
-                             group-hover:bg-primary/20 transition-colors duration-300"
-                  >
-                    {stat.icon}
-                  </div>
-                  <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{stat.number}</div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section> */}
-
-        {/* Features Section */}
         <section className="py-20" id="features">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -238,17 +200,15 @@ const About = memo(() => {
                 <div
                   key={index}
                   className={`group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 
-                           hover:-translate-y-2 border border-gray-100 hover:border-primary/20 ${
-                             activeFeature === index ? "ring-2 ring-primary/30" : ""
-                           }`}
+                           hover:-translate-y-2 border border-gray-100 hover:border-primary/20 ${activeFeature === index ? "ring-2 ring-primary/30" : ""
+                    }`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-blue-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative">
                     <div
                       className={`inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl text-primary mb-6 
-                               group-hover:bg-primary group-hover:text-white transition-all duration-300 ${
-                                 activeFeature === index ? "animate-pulse" : ""
-                               }`}
+                               group-hover:bg-primary group-hover:text-white transition-all duration-300 ${activeFeature === index ? "animate-pulse" : ""
+                        }`}
                     >
                       {feature.icon}
                     </div>
@@ -265,7 +225,6 @@ const About = memo(() => {
           </div>
         </section>
 
-        {/* Values Section */}
         <section className="py-20 bg-white/50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">

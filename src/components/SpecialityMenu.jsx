@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Users, ArrowRight } from 'lucide-react'
@@ -11,7 +9,7 @@ const SpecialityMenu = memo(() => {
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
-  
+
   const sectionRef = useRef(null)
   const scrollContainerRef = useRef(null)
 
@@ -55,8 +53,8 @@ const SpecialityMenu = memo(() => {
 
     const scrollAmount = 320
     const currentScroll = container.scrollLeft
-    const targetScroll = direction === 'left' 
-      ? currentScroll - scrollAmount 
+    const targetScroll = direction === 'left'
+      ? currentScroll - scrollAmount
       : currentScroll + scrollAmount
 
     container.scrollTo({
@@ -67,8 +65,7 @@ const SpecialityMenu = memo(() => {
 
   const handleSpecialtyClick = useCallback((speciality, index) => {
     setActiveIndex(index)
-    
-    // Track user interaction
+
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'click', {
         event_category: 'specialty_selection',
@@ -91,7 +88,6 @@ const SpecialityMenu = memo(() => {
 
   return (
     <>
-      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -117,25 +113,22 @@ const SpecialityMenu = memo(() => {
         id="speciality"
         aria-labelledby="speciality-heading"
       >
-        {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-10 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl animate-pulse" 
-               style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl animate-pulse" 
-               style={{ animationDelay: '0.5s' }} />
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: '0.5s' }} />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
-          <div className={`text-center mb-12 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
+          <div className={`text-center mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
             <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full mb-4">
               <Users className="w-4 h-4 text-primary mr-2" />
               <span className="text-primary text-sm font-medium">Trusted Specialists</span>
             </div>
-            
+
             <h1
               id="speciality-heading"
               className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 
@@ -143,7 +136,7 @@ const SpecialityMenu = memo(() => {
             >
               Find by Speciality
             </h1>
-            
+
             <p className="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
               Connect with world-class medical professionals across various specialties.{' '}
               <span className="font-medium text-gray-800">Schedule your appointment hassle-free</span>{' '}
@@ -151,27 +144,23 @@ const SpecialityMenu = memo(() => {
             </p>
           </div>
 
-          {/* Navigation Controls */}
           <div className="flex justify-center items-center mb-8">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => scrollToSection('left')}
                 disabled={!canScrollLeft}
-                className={`group p-3 rounded-full border transition-all duration-300 hover:scale-105 ${
-                  canScrollLeft
+                className={`group p-3 rounded-full border transition-all duration-300 hover:scale-105 ${canScrollLeft
                     ? 'bg-white shadow-lg hover:shadow-xl border-gray-200 hover:border-primary/30'
                     : 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
-                }`}
+                  }`}
                 aria-label="Scroll specialities left"
               >
                 <ChevronLeft
-                  className={`w-5 h-5 transition-colors duration-300 ${
-                    canScrollLeft ? 'text-gray-600 group-hover:text-primary' : 'text-gray-400'
-                  }`}
+                  className={`w-5 h-5 transition-colors duration-300 ${canScrollLeft ? 'text-gray-600 group-hover:text-primary' : 'text-gray-400'
+                    }`}
                 />
               </button>
 
-              {/* Progress Indicators */}
               <div className="flex space-x-2">
                 {Array.from({ length: Math.ceil(specialityData.length / 4) }).map((_, index) => (
                   <div
@@ -186,23 +175,20 @@ const SpecialityMenu = memo(() => {
               <button
                 onClick={() => scrollToSection('right')}
                 disabled={!canScrollRight}
-                className={`group p-3 rounded-full border transition-all duration-300 hover:scale-105 ${
-                  canScrollRight
+                className={`group p-3 rounded-full border transition-all duration-300 hover:scale-105 ${canScrollRight
                     ? 'bg-white shadow-lg hover:shadow-xl border-gray-200 hover:border-primary/30'
                     : 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
-                }`}
+                  }`}
                 aria-label="Scroll specialities right"
               >
                 <ChevronRight
-                  className={`w-5 h-5 transition-colors duration-300 ${
-                    canScrollRight ? 'text-gray-600 group-hover:text-primary' : 'text-gray-400'
-                  }`}
+                  className={`w-5 h-5 transition-colors duration-300 ${canScrollRight ? 'text-gray-600 group-hover:text-primary' : 'text-gray-400'
+                    }`}
                 />
               </button>
             </div>
           </div>
 
-          {/* Specialities Carousel */}
           <div className="relative">
             <div
               ref={scrollContainerRef}
@@ -220,25 +206,21 @@ const SpecialityMenu = memo(() => {
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   onKeyDown={(e) => handleKeyDown(e, item.speciality, index)}
-                  className={`group relative flex-shrink-0 w-72 transition-all duration-500 transform ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                  } ${hoveredIndex === index ? 'scale-105 z-10' : 'hover:scale-105'}`}
+                  className={`group relative flex-shrink-0 w-72 transition-all duration-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    } ${hoveredIndex === index ? 'scale-105 z-10' : 'hover:scale-105'}`}
                   style={{ transitionDelay: `${index * 100}ms` }}
                   aria-label={`Browse ${item.speciality} specialists`}
                 >
                   <div
-                    className={`relative p-8 rounded-2xl bg-white border-2 transition-all duration-300 ${
-                      activeIndex === index
+                    className={`relative p-8 rounded-2xl bg-white border-2 transition-all duration-300 ${activeIndex === index
                         ? 'border-primary shadow-2xl shadow-primary/20'
                         : 'border-gray-200 hover:border-primary/50 hover:shadow-xl'
-                    }`}
+                      }`}
                   >
-                    {/* Background Gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl 
                                   opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     <div className="relative z-10 flex flex-col items-center text-center">
-                      {/* Icon Container */}
                       <div className="relative mb-6 p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 
                                     group-hover:from-primary/10 group-hover:to-primary/5 transition-all duration-300">
                         <img
@@ -253,17 +235,15 @@ const SpecialityMenu = memo(() => {
                                       group-hover:opacity-100 group-hover:scale-125 transition-all duration-500" />
                       </div>
 
-                      {/* Content */}
                       <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors 
                                    duration-300 mb-2">
                         {item.speciality}
                       </h3>
-                      
+
                       <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-300 mb-4">
                         Expert Care & Treatment
                       </p>
 
-                      {/* CTA */}
                       <div className="flex items-center text-primary font-medium text-sm opacity-0 group-hover:opacity-100 
                                     transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                         <span>Browse Doctors</span>
@@ -271,7 +251,6 @@ const SpecialityMenu = memo(() => {
                       </div>
                     </div>
 
-                    {/* Active Indicator */}
                     {activeIndex === index && (
                       <div className="absolute top-4 right-4 w-3 h-3 bg-primary rounded-full animate-pulse" />
                     )}
@@ -280,12 +259,10 @@ const SpecialityMenu = memo(() => {
               ))}
             </div>
 
-            {/* Gradient Overlays */}
             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none z-10" />
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none z-10" />
           </div>
 
-          {/* Bottom CTA */}
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-4">Can't find your specialty?</p>
             <Link
@@ -300,8 +277,7 @@ const SpecialityMenu = memo(() => {
           </div>
         </div>
 
-        {/* Custom Scrollbar Styles */}
-        <style jsx>{`
+        <style>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
             scrollbar-width: none;

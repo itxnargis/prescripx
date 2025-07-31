@@ -1,5 +1,3 @@
-"use client"
-
 import { Helmet } from "react-helmet"
 import { FileText, AlertTriangle, Mail, Phone } from "lucide-react"
 

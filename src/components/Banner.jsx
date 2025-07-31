@@ -33,7 +33,6 @@ const Banner = memo(() => {
     return () => observer.disconnect()
   }, [])
 
-  // Rotate stats every 3 seconds
   useEffect(() => {
     if (!isVisible) return
     
@@ -45,7 +44,6 @@ const Banner = memo(() => {
   }, [isVisible, stats.length])
 
   const handleCreateAccount = useCallback(() => {
-    // Track user interaction
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'click', {
         event_category: 'engagement',
@@ -66,7 +64,6 @@ const Banner = memo(() => {
 
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -98,11 +95,9 @@ const Banner = memo(() => {
         role="banner"
         aria-labelledby="banner-heading"
       >
-        {/* Background with improved performance */}
         <div className="relative bg-gradient-to-r from-primary via-primary/95 to-primary/90 rounded-2xl 
                       shadow-2xl backdrop-blur-sm border border-white/10 min-h-[500px] md:min-h-[600px]">
           
-          {/* Animated background elements */}
           <div className="absolute inset-0 overflow-hidden rounded-2xl">
             <div className="absolute -top-10 -right-10 w-32 h-32 md:w-40 md:h-40 bg-white/10 rounded-full 
                           blur-3xl animate-pulse" />
@@ -113,12 +108,10 @@ const Banner = memo(() => {
           </div>
 
           <div className="relative flex flex-col lg:flex-row items-center px-4 sm:px-6 md:px-10 lg:px-12">
-            {/* Content Section */}
             <div className="flex-1 py-8 md:py-16 lg:py-24 text-center lg:text-left">
               <div className={`transform transition-all duration-1000 ${
                 isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}>
-                {/* Trust Badge */}
                 <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full 
                               px-4 py-2 text-white/90 text-sm font-medium mb-6">
                   <CheckCircle className="w-4 h-4 text-green-300" />
@@ -143,7 +136,6 @@ const Banner = memo(() => {
                   Quick booking, secure consultations, and personalized care tailored to your needs.
                 </p>
 
-                {/* CTA Buttons */}
                 <div className={`flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 
                                transform transition-all duration-1000 delay-300 ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
@@ -175,7 +167,6 @@ const Banner = memo(() => {
                   </button>
                 </div>
 
-                {/* Animated Stats */}
                 <div className={`flex flex-wrap justify-center lg:justify-start gap-6 text-white/70 
                                transform transition-all duration-1000 delay-500 ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
@@ -203,7 +194,6 @@ const Banner = memo(() => {
               </div>
             </div>
 
-            {/* Image Section */}
             <div className="relative mt-8 lg:mt-0 lg:w-1/2 xl:w-[400px]">
               <div className={`transform transition-all duration-1000 delay-200 ${
                 isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
@@ -222,7 +212,6 @@ const Banner = memo(() => {
                     height="400"
                   />
 
-                  {/* Floating elements */}
                   <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full p-3 
                                 animate-float">
                     <CheckCircle className="w-6 h-6 text-white" />
@@ -238,8 +227,7 @@ const Banner = memo(() => {
           </div>
         </div>
 
-        {/* Custom CSS for animations */}
-        <style jsx>{`
+        <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }

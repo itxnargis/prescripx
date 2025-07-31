@@ -1,8 +1,6 @@
-"use client"
-
 import { memo, useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Github, Twitter, Linkedin, User, MapPin, Mail, Phone, ExternalLink, Heart, Shield, Award } from 'lucide-react'
+import { Github, Twitter, Linkedin, User, Mail, Phone, ExternalLink, Heart, Shield, Award } from 'lucide-react'
 import { assets } from '../../public/assets/assets'
 
 const Footer = memo(() => {
@@ -57,16 +55,13 @@ const Footer = memo(() => {
   const handleNewsletterSubmit = useCallback((e) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const email = formData.get('email') 
-    
-    // Handle newsletter subscription
+    const email = formData.get('email')
+
     console.log('Newsletter subscription:', email)
-    // Add your newsletter subscription logic here
   }, [])
 
   return (
     <>
-      {/* Structured Data for Organization */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -97,23 +92,21 @@ const Footer = memo(() => {
       />
 
       <footer className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50/30 border-t border-gray-200/50">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,rgba(59,130,246,0.1),transparent_50%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Newsletter Section */}
           <div className="py-12 border-b border-gray-200/50">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 Stay Updated with Health Tips & News
               </h2>
               <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                Get the latest healthcare insights, wellness tips, and updates about our services 
+                Get the latest healthcare insights, wellness tips, and updates about our services
                 delivered straight to your inbox.
               </p>
-              
+
               <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
                   type="email"
@@ -150,14 +143,13 @@ const Footer = memo(() => {
                   height="48"
                 />
               </div>
-              
+
               <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
-                PrescripX is committed to excellence in healthcare technology. We continuously strive 
-                to enhance our platform, integrating the latest advancements to improve user experience 
+                PrescripX is committed to excellence in healthcare technology. We continuously strive
+                to enhance our platform, integrating the latest advancements to improve user experience
                 and deliver superior service.
               </p>
 
-              {/* Trust Indicators */}
               <div className="space-y-3">
                 {trustIndicators.map((indicator, index) => {
                   const IconComponent = indicator.icon
@@ -180,7 +172,6 @@ const Footer = memo(() => {
               </div>
             </div>
 
-            {/* Quick Links */}
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 relative">
                 Quick Links
@@ -204,13 +195,12 @@ const Footer = memo(() => {
               </nav>
             </div>
 
-            {/* Contact Info */}
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 relative">
                 Get In Touch
                 <div className="absolute -bottom-2 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent" />
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 group">
                   <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center 
@@ -256,7 +246,6 @@ const Footer = memo(() => {
                   </a>
                 </div>
 
-                {/* Social Links */}
                 <div className="pt-4">
                   <p className="text-sm font-medium text-gray-700 mb-3">Follow Us</p>
                   <div className="flex items-center space-x-3">
@@ -282,13 +271,12 @@ const Footer = memo(() => {
             </div>
           </div>
 
-          {/* Bottom Section */}
           <div className="border-t border-gray-200/50 py-6">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
               <p className="text-sm text-gray-500 text-center md:text-left">
                 © {currentYear} PrescripX. All rights reserved. Made with ❤️ for better healthcare.
               </p>
-              
+
               <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-gray-400">
                 {legalLinks.map((link) => (
                   <NavLink

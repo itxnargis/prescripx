@@ -1,8 +1,6 @@
-"use client"
-
 import { useContext, useState, useCallback, memo } from "react"
 import { useNavigate } from "react-router-dom"
-import { Star, ArrowRight, Users, Award, Calendar, MapPin, Clock, Shield } from "lucide-react"
+import { Star, ArrowRight, Award, Calendar, MapPin, Clock, Shield } from "lucide-react"
 import { AppContext } from "../context/AppContext"
 
 const TopDoctors = memo(() => {
@@ -14,15 +12,12 @@ const TopDoctors = memo(() => {
 
   const handleDoctorClick = useCallback(
     (doctorId, isAvailable) => {
-      // Prevent booking if doctor is not available
       if (!isAvailable) {
         return
       }
 
-      // Optimistic UI update
       setBookingStates(prev => ({ ...prev, [doctorId]: 'booking' }))
 
-      // Track user interaction
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "click", {
           event_category: "doctor_selection",
@@ -30,7 +25,6 @@ const TopDoctors = memo(() => {
         })
       }
 
-      // Simulate booking process with instant feedback
       setTimeout(() => {
         navigate(`/appointment/${doctorId}`)
         window.scrollTo({ top: 0, behavior: "smooth" })
@@ -76,7 +70,6 @@ const TopDoctors = memo(() => {
 
   return (
     <>
-      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -107,13 +100,11 @@ const TopDoctors = memo(() => {
         aria-labelledby="top-doctors-heading"
         role="region"
       >
-        {/* Optimized Background Pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.15),transparent_60%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Simplified Header */}
           <div className="text-center mb-12">
             <div className="inline-block mb-3">
               <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
@@ -136,7 +127,6 @@ const TopDoctors = memo(() => {
             </p>
           </div>
 
-          {/* Enhanced Doctors Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {doctors.slice(0, visibleDoctors).map((doctor, index) => (
               <article
@@ -151,7 +141,6 @@ const TopDoctors = memo(() => {
                 tabIndex={doctor.available ? 0 : -1}
                 aria-label={`${doctor.available ? 'Book appointment with' : 'Doctor currently unavailable'} Dr. ${doctor.name}, ${doctor.speciality}`}
               >
-                {/* Doctor Image with Optimized Loading */}
                 <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 aspect-[4/3]">
                   <img
                     className={`w-full h-full object-cover transition-transform duration-500 
@@ -163,20 +152,16 @@ const TopDoctors = memo(() => {
                     height="240"
                   />
 
-                  {/* Enhanced Availability Badge */}
                   <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs 
-                              font-medium backdrop-blur-sm ${
-                                doctor.available 
-                                  ? "bg-green-500/90 text-white" 
-                                  : "bg-red-500/90 text-white"
-                              }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      doctor.available ? "bg-green-200 animate-pulse" : "bg-red-200"
-                    }`} />
+                              font-medium backdrop-blur-sm ${doctor.available
+                      ? "bg-green-500/90 text-white"
+                      : "bg-red-500/90 text-white"
+                    }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${doctor.available ? "bg-green-200 animate-pulse" : "bg-red-200"
+                      }`} />
                     {doctor.available ? "Available" : "Busy"}
                   </div>
 
-                  {/* Overlay for busy doctors */}
                   {!doctor.available && (
                     <div className="absolute inset-0 bg-gray-900/20 flex items-center justify-center">
                       <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
@@ -186,7 +171,6 @@ const TopDoctors = memo(() => {
                   )}
                 </div>
 
-                {/* Streamlined Doctor Info */}
                 <div className="p-5 space-y-3">
                   <div className="space-y-1">
                     <h3 className="text-lg font-bold text-gray-900 leading-tight">
@@ -197,7 +181,6 @@ const TopDoctors = memo(() => {
                     </p>
                   </div>
 
-                  {/* Simplified Stats */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-1">
                       <Star className="w-3.5 h-3.5 text-yellow-400 fill-current" />
@@ -210,27 +193,24 @@ const TopDoctors = memo(() => {
                     </div>
                   </div>
 
-                  {/* ENHANCED BOOK NOW BUTTON - Updated Logic */}
                   <button
                     onClick={() => handleDoctorClick(doctor._id, doctor.available)}
                     disabled={!doctor.available || bookingStates[doctor._id] === 'booking'}
                     className={`
                       w-full relative overflow-hidden rounded-xl font-semibold text-sm py-3 px-4
                       transition-all duration-300 transform
-                      ${doctor.available 
+                      ${doctor.available
                         ? `bg-blue-600 text-white shadow-lg hover:bg-blue-700 hover:scale-105
                            ${bookingStates[doctor._id] === 'booking' ? 'animate-pulse' : ''}`
                         : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       }
                     `}
                   >
-                    {/* Animated Background Shine Effect - Only for available doctors */}
                     {doctor.available && !bookingStates[doctor._id] && (
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
                                     -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     )}
-                    
-                    {/* Button Content */}
+
                     <div className="relative flex items-center justify-center gap-2">
                       {bookingStates[doctor._id] === 'booking' ? (
                         <>
@@ -251,14 +231,12 @@ const TopDoctors = memo(() => {
                       )}
                     </div>
 
-                    {/* Pulse Ring Effect - Only for available doctors */}
                     {doctor.available && !bookingStates[doctor._id] && (
                       <div className="absolute inset-0 rounded-xl ring-2 ring-blue-400 ring-opacity-0 
                                     group-hover:ring-opacity-75 group-hover:animate-ping transition-all duration-300" />
                     )}
                   </button>
 
-                  {/* Quick Info */}
                   <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-1">
                     <div className="flex items-center gap-1">
                       <Shield className="w-3 h-3 text-green-500" />
@@ -280,7 +258,6 @@ const TopDoctors = memo(() => {
             ))}
           </div>
 
-          {/* Simplified Load More / View All */}
           <div className="text-center space-y-4">
             {visibleDoctors < doctors.length && (
               <button

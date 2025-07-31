@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { AppContext } from "../context/AppContext"
 import axios from "axios"
 import { toast } from "react-toastify"
@@ -41,6 +41,10 @@ const MyProfile = () => {
     }
   }
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!userData) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -68,7 +72,7 @@ const MyProfile = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 my-16">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-primary to-blue-600 px-8 py-6">
           <div className="flex items-center justify-between">
